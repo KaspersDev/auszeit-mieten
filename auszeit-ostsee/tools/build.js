@@ -24,7 +24,7 @@ const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
 
 /* Was in die Auslieferung gehoert. */
-const FILES = ["index.html", "impressum.html", "datenschutz.html", "favicon.png", "robots.txt", "sitemap.xml"];
+const FILES = ["index.html", "impressum.html", "datenschutz.html", "images/logo.png", "robots.txt", "sitemap.xml"];
 const DIRS = ["css", "js", "images", "fonts"];
 
 /* Diese Dateien werden nicht angefasst, nur kopiert. */

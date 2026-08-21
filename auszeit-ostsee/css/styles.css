@@ -445,9 +445,10 @@ hr {
 
 .brand__mark {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 142px;
+  height: 142px;
   color: var(--c-sea);
+  object-fit: contain;
 }
 
 .brand__text {
