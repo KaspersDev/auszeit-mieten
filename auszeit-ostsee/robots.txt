@@ -1,0 +1,7 @@
+# robots.txt - Auszeit Ostsee
+# Domain vor dem Livegang anpassen.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.auszeit-mieten.de/sitemap.xml

@@ -1,0 +1,12 @@
+{
+  "name": "auszeit-ostsee",
+  "version": "1.0.0",
+  "description": "Statische Website fuer die Ferienwohnungen Auszeit Ostsee in Ostseebad Boltenhagen",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "node tools/build.js",
+    "serve": "python3 -m http.server 8000",
+    "images": "python3 tools/generate-placeholders.py"
+  }
+}
