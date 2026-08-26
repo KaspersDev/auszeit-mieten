@@ -11,6 +11,7 @@
      7.  Hero
      8.  Ueber uns
      9.  Wohnungen
+     9b. Wohnungs-Detailseiten
     10.  Galerie & Lightbox
     11.  Lage & Karte
     12.  Kontakt & Formular
@@ -49,20 +50,37 @@
 }
 
 :root {
-  /* Farben - zurueckhaltende Ostsee-Palette */
-  --c-ink: #14232e;
-  --c-ink-soft: #3d4b57;
-  --c-body: #55606b;
-  --c-muted: #656f79;
-  --c-sea: #2f6a86;
-  --c-sea-dark: #245469;
-  --c-sea-tint: #eef3f6;
-  --c-sand: #e8e0d4;
-  --c-sand-soft: #f7f3ec;
+  /* Farben - waermere Ostsee-Palette.
+     Das Blau bleibt die Leitfarbe, Bernstein setzt die warmen Akzente. */
+  --c-ink: #16262f;
+  --c-ink-soft: #3f4e58;
+  --c-body: #55616a;
+  --c-muted: #6d7681;
+
+  --c-sea: #2b7091;
+  --c-sea-dark: #1f5670;
+  --c-sea-light: #4f9cba;
+  --c-sea-tint: #e8f1f6;
+
+  /* Zweiter Akzent - warmer Bernstein fuer Zahlen, Marker und Details. */
+  --c-amber: #bf7238;
+  --c-amber-dark: #a25c28;
+  --c-amber-tint: #fbf0e3;
+
+  /* Flaechen - kein reines Weiss mehr als Grundton. */
   --c-surface: #ffffff;
-  --c-line: #e3ded5;
-  --c-line-strong: #cfc7ba;
+  --c-page: #fdfaf6;
+  --c-sand: #ecdfce;
+  --c-sand-soft: #f8f1e6;
+  --c-line: #e9dfd1;
+  --c-line-strong: #d5c8b6;
   --c-error: #a3392f;
+
+  /* Verlaeufe - sparsam, nur fuer grosse Flaechen und den Hauptbutton. */
+  --grad-sea: linear-gradient(135deg, #34809f 0%, #235d78 100%);
+  --grad-sea-hover: linear-gradient(135deg, #2b7091 0%, #1a4a61 100%);
+  --grad-tint: linear-gradient(180deg, #fdfaf6 0%, #f7efe2 42%, #fbf6ef 100%);
+  --grad-accent: linear-gradient(90deg, var(--c-sea) 0%, var(--c-amber) 100%);
 
   /* Typografie */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -87,16 +105,25 @@
   --space-3xl: 4rem;
   --section-y: clamp(4rem, 9vw, 7.5rem);
 
-  /* Sonstiges */
+  /* Radien - deutlich weicher als zuvor (war 4 bzw. 6 Pixel). */
   --container: 1180px;
-  --radius: 4px;
-  --radius-lg: 6px;
-  --header-h: 72px;
-  --shadow-sm: 0 1px 2px rgba(20, 35, 46, 0.05);
-  --shadow-md: 0 6px 24px -12px rgba(20, 35, 46, 0.22);
-  --shadow-lg: 0 22px 48px -24px rgba(20, 35, 46, 0.32);
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --header-h: 80px;
+
+  /* Schatten - leicht blau eingefaerbt statt neutral grau, dadurch
+     wirken abgehobene Flaechen weicher und weniger technisch. */
+  --shadow-sm: 0 1px 2px rgba(24, 45, 58, 0.05), 0 3px 8px -5px rgba(24, 45, 58, 0.1);
+  --shadow-md: 0 4px 10px -6px rgba(24, 45, 58, 0.16), 0 14px 30px -18px rgba(24, 45, 58, 0.28);
+  --shadow-lg: 0 8px 18px -10px rgba(24, 45, 58, 0.16), 0 30px 60px -30px rgba(24, 45, 58, 0.36);
+  --shadow-sea: 0 10px 24px -12px rgba(43, 112, 145, 0.55);
+
   --duration: 200ms;
+  --duration-slow: 420ms;
   --transition: var(--duration) cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* --------------------------------------------------------------------------
@@ -117,7 +144,7 @@ html {
 
 body {
   margin: 0;
-  background-color: var(--c-surface);
+  background-color: var(--c-page);
   color: var(--c-body);
   font-family: var(--font-sans);
   font-size: var(--fs-body);
@@ -170,6 +197,8 @@ a {
   transition: color var(--transition);
 }
 
+/* Markierter Text greift die Akzentfarbe auf. */
+
 a:hover {
   color: var(--c-sea-dark);
 }
@@ -212,7 +241,7 @@ hr {
 }
 
 ::selection {
-  background-color: var(--c-sea);
+  background-color: var(--c-amber);
   color: #fff;
 }
 
@@ -235,8 +264,10 @@ hr {
   padding-block: var(--section-y);
 }
 
+/* Sanfter Verlauf statt einer flachen Fuellung - der Uebergang zwischen
+   den Abschnitten wirkt dadurch weicher. */
 .section--tint {
-  background-color: var(--c-sand-soft);
+  background: var(--grad-tint);
 }
 
 .section--bordered {
@@ -278,14 +309,31 @@ hr {
    4. Typografie-Bausteine
    -------------------------------------------------------------------------- */
 
+/* Der kurze Strich vor dem Text ersetzt die reine Grossbuchstabenzeile
+   und gibt jedem Abschnitt einen ruhigen, aber sichtbaren Auftakt. */
 .eyebrow {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
   margin-bottom: var(--space-sm);
   color: var(--c-sea);
   font-size: var(--fs-eyebrow);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  flex-shrink: 0;
+  width: 28px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--grad-accent);
+}
+
+.section__head--center .eyebrow {
+  justify-content: center;
 }
 
 .title-xl {
@@ -345,40 +393,72 @@ hr {
 }
 
 .btn--primary {
-  background-color: var(--c-sea);
+  background: var(--grad-sea);
   color: #fff;
   box-shadow: var(--shadow-sm);
 }
 
 .btn--primary:hover {
-  background-color: var(--c-sea-dark);
+  background: var(--grad-sea-hover);
   color: #fff;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sea);
+  transform: translateY(-2px);
+}
+
+.btn--primary:active {
+  transform: translateY(0);
 }
 
 .btn--secondary {
-  background-color: transparent;
+  background-color: var(--c-surface);
   border-color: var(--c-line-strong);
   color: var(--c-ink);
 }
 
 .btn--secondary:hover {
-  border-color: var(--c-sea);
-  color: var(--c-sea);
+  border-color: var(--c-sea-light);
+  color: var(--c-sea-dark);
   background-color: var(--c-sea-tint);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.btn--secondary:active {
+  transform: translateY(0);
+}
+
+/* Dritte, dezenteste Stufe: nur Text mit Pfeil, fuer Zweitwege wie
+   "Details ansehen" neben dem eigentlichen Buchungsbutton. */
+.btn--quiet {
+  min-height: 44px;
+  padding: 0.625rem 1.125rem;
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--c-sea-dark);
+}
+
+.btn--quiet:hover {
+  background-color: var(--c-sea-tint);
+  color: var(--c-sea-dark);
 }
 
 .btn--ghost-light {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.55);
   color: #fff;
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .btn--ghost-light:hover {
   background-color: rgba(255, 255, 255, 0.95);
   border-color: #fff;
   color: var(--c-ink);
+  transform: translateY(-2px);
+}
+
+.btn--ghost-light:active {
+  transform: translateY(0);
 }
 
 .btn--block {
@@ -394,6 +474,13 @@ hr {
   stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
+  transition: transform var(--transition);
+}
+
+/* Kleine Bewegung nach rechts - genug, um den Button lebendig wirken zu
+   lassen, zu wenig, um vom Text abzulenken. */
+.btn:hover .btn__icon {
+  transform: translateX(3px);
 }
 
 .btn-row {
@@ -410,17 +497,18 @@ hr {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(253, 250, 246, 0.88);
   border-bottom: 1px solid transparent;
-  backdrop-filter: saturate(150%) blur(12px);
-  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
   transition: border-color var(--transition), box-shadow var(--transition),
     background-color var(--transition);
 }
 
 .header.is-scrolled {
+  background-color: rgba(253, 250, 246, 0.94);
   border-bottom-color: var(--c-line);
-  box-shadow: 0 1px 16px -8px rgba(20, 35, 46, 0.28);
+  box-shadow: 0 2px 20px -10px rgba(24, 45, 58, 0.3);
 }
 
 .header__inner {
@@ -443,12 +531,26 @@ hr {
   color: var(--c-sea);
 }
 
+/* Die Marke bestimmt die Kopfhoehe mit: --header-h muss zur Bildgroesse
+   passen, sonst stimmen Sprungmarken und das mobile Menue nicht mehr. */
 .brand__mark {
   flex-shrink: 0;
-  width: 142px;
-  height: 142px;
+  width: 56px;
+  height: 56px;
   color: var(--c-sea);
   object-fit: contain;
+  transition: transform var(--duration) var(--ease-out);
+}
+
+.brand:hover .brand__mark {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+@media (max-width: 520px) {
+  .brand__mark {
+    width: 46px;
+    height: 46px;
+  }
 }
 
 .brand__text {
@@ -486,29 +588,35 @@ hr {
 .nav__link {
   position: relative;
   display: inline-block;
-  padding-block: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-pill);
   color: var(--c-ink-soft);
   font-size: 0.9375rem;
   font-weight: 500;
   text-decoration: none;
+  transition: color var(--transition), background-color var(--transition);
 }
 
+/* Der Unterstrich waechst aus der Mitte heraus und ist abgerundet -
+   das wirkt freundlicher als die harte Linie von links nach rechts. */
 .nav__link::after {
   content: "";
   position: absolute;
   bottom: 0.125rem;
-  left: 0;
-  width: 100%;
-  height: 1.5px;
-  background-color: var(--c-sea);
+  left: 0.75rem;
+  right: 0.75rem;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--grad-accent);
   transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--transition);
+  transition: transform var(--duration) var(--ease-out);
 }
 
 .nav__link:hover,
-.nav__link[aria-current="true"] {
-  color: var(--c-sea);
+.nav__link[aria-current="true"],
+.nav__link[aria-current="page"] {
+  color: var(--c-sea-dark);
+  background-color: var(--c-sea-tint);
 }
 
 .nav__link:hover::after,
@@ -517,10 +625,156 @@ hr {
   transform: scaleX(1);
 }
 
+/* ---- Untermenue "Wohnungen" ----------------------------------------
+   Aufbau: der Link fuehrt weiterhin zur Uebersicht, das Aufklappen
+   uebernimmt ein eigener Knopf daneben. So bleibt beides erreichbar -
+   mit Maus, Tastatur und auf dem Touchscreen. */
+
+.nav__item {
+  position: relative;
+}
+
+.nav__group {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.nav__sub-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--c-muted);
+  cursor: pointer;
+  transition: color var(--transition), background-color var(--transition);
+}
+
+.nav__sub-toggle:hover {
+  background-color: var(--c-sea-tint);
+  color: var(--c-sea-dark);
+}
+
+.nav__chevron {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--duration) var(--ease-out);
+}
+
+.nav__sub-toggle[aria-expanded="true"] .nav__chevron {
+  transform: rotate(180deg);
+}
+
+.nav__menu {
+  display: grid;
+  gap: 2px;
+}
+
+.nav__menu-link {
+  display: block;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius);
+  color: var(--c-ink);
+  text-decoration: none;
+  transition: background-color var(--transition), color var(--transition),
+    transform var(--transition);
+}
+
+.nav__menu-link:hover,
+.nav__menu-link[aria-current="page"] {
+  background-color: var(--c-sea-tint);
+  color: var(--c-sea-dark);
+}
+
+.nav__menu-title {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.nav__menu-meta {
+  display: block;
+  color: var(--c-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.nav__menu-link:hover .nav__menu-meta {
+  color: var(--c-sea);
+}
+
+/* Letzter Eintrag fuehrt zurueck auf die Uebersicht. */
+.nav__menu-link--all {
+  margin-top: 2px;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--c-line);
+  border-radius: 0 0 var(--radius) var(--radius);
+  color: var(--c-sea-dark);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .nav__cta {
   min-height: 42px;
   padding: 0.5rem 1.125rem;
   font-size: 0.875rem;
+}
+
+/* Ab Tabletbreite schwebt das Untermenue unter dem Navigationspunkt. */
+@media (min-width: 861px) {
+  .nav__menu {
+    position: absolute;
+    top: calc(100% + 0.625rem);
+    left: 50%;
+    z-index: 10;
+    min-width: 264px;
+    padding: 0.5rem;
+    background-color: var(--c-surface);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -8px);
+    transition: opacity var(--transition), transform var(--duration) var(--ease-out),
+      visibility 0s linear var(--duration);
+  }
+
+  /* Unsichtbare Bruecke ueber den Abstand zwischen Link und Menue -
+     ohne sie wuerde das Menue zuklappen, sobald die Maus den Spalt quert. */
+  .nav__menu::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    height: 0.75rem;
+  }
+
+  .nav__item:hover > .nav__menu,
+  .nav__item.is-open > .nav__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition: opacity var(--transition), transform var(--duration) var(--ease-out),
+      visibility 0s;
+  }
+
+  .nav__menu-link:hover {
+    transform: translateX(2px);
+  }
 }
 
 .nav-toggle {
@@ -622,18 +876,69 @@ hr {
     margin-bottom: var(--space-xl);
   }
 
-  .nav__list li + li {
+  /* Nur die Hauptpunkte bekommen eine Trennlinie - ohne den
+     Kindkombinator ">" wuerde sie auch im Untermenue erscheinen. */
+  .nav__list > li + li {
     border-top: 1px solid var(--c-line);
   }
 
   .nav__link {
     display: block;
-    padding-block: var(--space-md);
+    flex: 1;
+    padding: var(--space-md) 0;
+    border-radius: 0;
     font-size: 1.0625rem;
+  }
+
+  .nav__link:hover,
+  .nav__link[aria-current="true"],
+  .nav__link[aria-current="page"] {
+    background-color: transparent;
   }
 
   .nav__link::after {
     display: none;
+  }
+
+  /* Untermenue als Akkordeon: der Knopf klappt auf, ohne der Seite zu
+     folgen - antippen des Namens fuehrt weiterhin zur Uebersicht. */
+  .nav__group {
+    justify-content: space-between;
+    gap: var(--space-sm);
+  }
+
+  .nav__sub-toggle {
+    width: 44px;
+    height: 44px;
+    margin-right: -0.5rem;
+    color: var(--c-ink-soft);
+  }
+
+  /* visibility statt nur max-height: nur so nimmt der Browser die
+     eingeklappten Links auch aus der Tabulator-Reihenfolge heraus. */
+  .nav__menu {
+    max-height: 0;
+    padding-left: var(--space-md);
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transition: max-height var(--duration-slow) var(--ease-out),
+      opacity var(--transition), padding-bottom var(--transition),
+      visibility 0s linear var(--duration-slow);
+  }
+
+  .nav__item.is-open .nav__menu {
+    max-height: 400px;
+    padding-bottom: var(--space-md);
+    visibility: visible;
+    opacity: 1;
+    transition: max-height var(--duration-slow) var(--ease-out),
+      opacity var(--transition), padding-bottom var(--transition),
+      visibility 0s;
+  }
+
+  .nav__menu-link {
+    padding: 0.75rem 0.875rem;
   }
 
   .nav__cta {
@@ -676,17 +981,23 @@ hr {
   background:
     linear-gradient(
       to right,
-      rgba(10, 22, 30, 0.68) 0%,
-      rgba(10, 22, 30, 0.56) 36%,
-      rgba(10, 22, 30, 0.18) 72%,
-      rgba(10, 22, 30, 0.08) 100%
+      rgba(12, 34, 45, 0.7) 0%,
+      rgba(12, 34, 45, 0.56) 36%,
+      rgba(12, 34, 45, 0.18) 72%,
+      rgba(12, 34, 45, 0.06) 100%
     ),
     linear-gradient(
       to top,
-      rgba(10, 22, 30, 0.52) 0%,
-      rgba(10, 22, 30, 0.24) 48%,
-      rgba(10, 22, 30, 0.14) 74%,
-      rgba(10, 22, 30, 0.28) 100%
+      rgba(14, 30, 38, 0.55) 0%,
+      rgba(20, 40, 46, 0.2) 48%,
+      rgba(30, 44, 40, 0.1) 74%,
+      rgba(12, 28, 36, 0.3) 100%
+    ),
+    /* Ein Hauch Bernstein am rechten Rand nimmt dem Bild die Kuehle. */
+    radial-gradient(
+      120% 90% at 88% 78%,
+      rgba(191, 114, 56, 0.26) 0%,
+      rgba(191, 114, 56, 0) 60%
     );
 }
 
@@ -711,7 +1022,25 @@ hr {
   }
 }
 
+/* Weiche Kante statt harter Schnitt: der Hero laeuft in die Grundflaeche
+   aus. Rein dekorativ, deshalb ohne eigenes Markup. */
+.hero::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  z-index: 0;
+  height: clamp(40px, 6vw, 72px);
+  background-color: var(--c-page);
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 100%, #000 55%, transparent 56%);
+  mask-image: radial-gradient(120% 100% at 50% 100%, #000 55%, transparent 56%);
+  pointer-events: none;
+}
+
 .hero__content {
+  position: relative;
+  z-index: 1;
   max-width: 640px;
   color: #fff;
 }
@@ -818,6 +1147,16 @@ hr {
   padding-left: var(--space-md);
 }
 
+.facts__item::before {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 2px;
+  margin-bottom: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--grad-accent);
+}
+
 .facts__value {
   display: block;
   color: var(--c-ink);
@@ -856,9 +1195,9 @@ hr {
 }
 
 .apartment:hover {
-  border-color: var(--c-line-strong);
+  border-color: var(--c-sea-light);
   box-shadow: var(--shadow-lg);
-  transform: translateY(-3px);
+  transform: translateY(-6px);
 }
 
 .apartment__media {
@@ -871,11 +1210,11 @@ hr {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 600ms var(--ease-out);
 }
 
 .apartment:hover .apartment__media img {
-  transform: scale(1.035);
+  transform: scale(1.055);
 }
 
 .apartment__badge {
@@ -884,12 +1223,15 @@ hr {
   left: var(--space-md);
   padding: 0.3125rem 0.6875rem;
   background-color: rgba(255, 255, 255, 0.94);
-  border-radius: 2px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
   color: var(--c-ink);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .apartment__body {
@@ -909,9 +1251,9 @@ hr {
 }
 
 .apartment__price {
-  color: var(--c-ink);
-  font-size: 0.9375rem;
-  font-weight: 600;
+  color: var(--c-amber-dark);
+  font-size: 1rem;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -953,9 +1295,10 @@ hr {
 }
 
 .apartment__specs li {
-  padding: 0.25rem 0.625rem;
+  padding: 0.3125rem 0.75rem;
   background-color: var(--c-sand-soft);
-  border-radius: 2px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-pill);
   color: var(--c-ink-soft);
   font-size: var(--fs-small);
   font-weight: 500;
@@ -989,6 +1332,8 @@ hr {
 }
 
 .apartment__actions {
+  display: grid;
+  gap: var(--space-sm);
   margin-top: auto;
 }
 
@@ -997,6 +1342,365 @@ hr {
   color: var(--c-muted);
   font-size: 0.8125rem;
   text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   9b. Wohnungs-Detailseiten
+
+   Bausteine fuer wohnung-duene.html und wohnung-hafen.html. Eine weitere
+   Wohnung braucht nur eine Kopie einer dieser Dateien - hier ist keine
+   Aenderung noetig.
+   -------------------------------------------------------------------------- */
+
+.detail-head {
+  max-width: 720px;
+}
+
+.detail-head .lead {
+  margin-top: var(--space-md);
+}
+
+/* Eckdaten direkt unter der Ueberschrift - beantwortet die haeufigsten
+   Fragen, bevor der Fliesstext beginnt. */
+.detail-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.detail-facts li {
+  display: flex;
+  align-items: center;
+  gap: 0.4375rem;
+  padding: 0.4375rem 0.875rem;
+  background-color: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-pill);
+  color: var(--c-ink-soft);
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+.detail-facts svg {
+  width: 15px;
+  height: 15px;
+  color: var(--c-sea);
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Grosses Bild direkt unter dem Seitenkopf. Der negative obere Abstand
+   rueckt es naeher an die Ueberschrift, ohne den Abschnitt umzubauen. */
+.detail-media {
+  margin: calc(var(--section-y) * -0.42) 0 clamp(2.5rem, 6vw, 4rem);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.detail-media img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+@media (max-width: 700px) {
+  .detail-media img {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.detail__grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+@media (min-width: 940px) {
+  .detail__grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* Zwei gleichwertige Karten nebeneinander - anders als .detail__grid,
+   das eine breite Text- und eine schmale Randspalte bildet. */
+.card-duo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-lg);
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.detail__block + .detail__block {
+  margin-top: var(--space-2xl);
+}
+
+.detail__subtitle {
+  margin-bottom: var(--space-md);
+  font-size: var(--fs-h3);
+}
+
+/* Kacheln fuer Groesse, Zimmer, Belegung ... */
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 148px), 1fr));
+  gap: var(--space-md);
+}
+
+.spec {
+  padding: var(--space-md) var(--space-md) var(--space-lg);
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.spec:hover {
+  border-color: var(--c-sea-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.spec__label {
+  display: block;
+  color: var(--c-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /* body setzt break-word - hier soll ein langes Wort wie
+     "Schlafzimmer" lieber die Kachel bestimmen als mittendrin brechen. */
+  overflow-wrap: normal;
+}
+
+.spec__value {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--c-ink);
+  font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  /* Lange Werte wie "Dachgeschoss" sollen an einer sinnvollen Stelle
+     getrennt werden statt mitten im Wort umzubrechen. */
+  overflow-wrap: normal;
+  hyphens: auto;
+}
+
+/* Raumaufteilung als Liste mit farbigem Auftakt. */
+.room-list {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.room-list li {
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--c-sand-soft);
+  border-left: 3px solid var(--c-sea-light);
+  border-radius: var(--radius-sm) var(--radius) var(--radius) var(--radius-sm);
+}
+
+.room-list strong {
+  display: block;
+  color: var(--c-ink);
+  font-weight: 600;
+}
+
+.room-list span {
+  font-size: var(--fs-small);
+}
+
+/* Buchungskarte, laeuft auf breiten Bildschirmen mit. */
+.booking-card {
+  padding: clamp(1.5rem, 3vw, 2rem);
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 940px) {
+  .booking-card {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+  }
+}
+
+.booking-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  color: var(--c-amber-dark);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.booking-card__price span {
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+  font-weight: 400;
+}
+
+.booking-card__hint {
+  margin-top: 0.25rem;
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
+.booking-card__list {
+  display: grid;
+  gap: 0.625rem;
+  margin: var(--space-lg) 0;
+  padding: var(--space-lg) 0;
+  border-block: 1px solid var(--c-line);
+  font-size: var(--fs-small);
+}
+
+.booking-card__list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.booking-card__list span:last-child {
+  color: var(--c-ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.booking-card .btn + .btn {
+  margin-top: var(--space-sm);
+}
+
+/* Abschlussband mit Verlauf - ersetzt den frueher rein weissen Ausklang. */
+.cta-band {
+  position: relative;
+  padding: clamp(2.5rem, 6vw, 4rem);
+  background: var(--grad-sea);
+  border-radius: var(--radius-lg);
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cta-band::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  right: -8%;
+  z-index: -1;
+  width: min(460px, 62%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(191, 114, 56, 0.42) 0%, rgba(191, 114, 56, 0) 66%);
+}
+
+.cta-band h2 {
+  max-width: 22ch;
+  color: #fff;
+}
+
+.cta-band .eyebrow {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.cta-band .eyebrow::before {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.cta-band__text {
+  max-width: 52ch;
+  margin-top: var(--space-md);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cta-band .btn-row {
+  margin-top: var(--space-xl);
+}
+
+/* Wechsel zur jeweils anderen Wohnung. */
+.switch-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-md);
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--transition), box-shadow var(--transition),
+    transform var(--transition);
+}
+
+.switch-card:hover {
+  border-color: var(--c-sea-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.switch-card img {
+  flex-shrink: 0;
+  width: 108px;
+  height: 84px;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.switch-card__label {
+  display: block;
+  color: var(--c-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.switch-card__title {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--c-ink);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+}
+
+.switch-card__meta {
+  display: block;
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
+.switch-card__arrow {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  color: var(--c-sea);
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--transition);
+}
+
+.switch-card:hover .switch-card__arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 520px) {
+  .switch-card img {
+    width: 82px;
+    height: 70px;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -1031,22 +1735,28 @@ hr {
   padding: 0;
   background-color: var(--c-sand);
   border: 0;
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
   cursor: zoom-in;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.gallery__item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
 }
 
 .gallery__item img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1),
-    opacity var(--transition);
+  transition: transform 600ms var(--ease-out), opacity var(--transition);
 }
 
 .gallery__item:hover img {
-  transform: scale(1.04);
-  opacity: 0.92;
+  transform: scale(1.06);
+  opacity: 0.94;
 }
 
 .lightbox {
@@ -1300,7 +2010,7 @@ hr {
   padding: var(--space-lg);
   background-color: var(--c-sea-tint);
   border-left: 3px solid var(--c-sea);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  border-radius: var(--radius-sm) var(--radius) var(--radius) var(--radius-sm);
 }
 
 .notice svg {
@@ -1548,6 +2258,8 @@ textarea.field__control {
 }
 
 .footer__brand .brand__mark {
+  width: 42px;
+  height: 42px;
   color: #8fb3c4;
 }
 
@@ -1627,9 +2339,32 @@ textarea.field__control {
    -------------------------------------------------------------------------- */
 
 .page-header {
+  position: relative;
   padding-block: clamp(3rem, 7vw, 5rem) clamp(2rem, 4vw, 3rem);
-  background-color: var(--c-sand-soft);
+  background: var(--grad-tint);
   border-bottom: 1px solid var(--c-line);
+  overflow: hidden;
+}
+
+/* Dezenter Farbschimmer im Hintergrund - nimmt der Flaeche das Sterile. */
+.page-header::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: min(520px, 60%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(43, 112, 145, 0.1) 0%, rgba(43, 112, 145, 0) 68%);
+  pointer-events: none;
+}
+
+.page-header > * {
+  position: relative;
+}
+
+.breadcrumb a:hover {
+  color: var(--c-sea-dark);
 }
 
 .breadcrumb {
@@ -1818,8 +2553,31 @@ textarea.field__control {
   .nav-toggle,
   .lightbox,
   .hero__media,
-  .hero__scrim {
+  .hero__scrim,
+  .hero::after,
+  .page-header::before,
+  .switch-card,
+  .card-duo {
     display: none !important;
+  }
+
+  .booking-card,
+  .spec,
+  .detail-media,
+  .cta-band {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .cta-band {
+    background: none !important;
+    color: #000;
+  }
+
+  .cta-band h2,
+  .cta-band__text,
+  .cta-band .eyebrow {
+    color: #000;
   }
 
   body {

@@ -33,6 +33,7 @@
 <!-- Icon-Sammlung (nur die auf dieser Seite verwendeten Symbole). -->
 <svg class="visually-hidden" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
   <defs>
+    <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7"/></symbol>
     <symbol id="icon-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1.9 1.9 0 0 1-1.9 1.9H5A1.9 1.9 0 0 1 3.1 19V7.9A1.9 1.9 0 0 1 5 6h5"/></symbol>
     <symbol id="icon-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.4 6.6h.01"/></symbol>
     <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M14.5 8.5H17V5h-2.5A4 4 0 0 0 10.5 9v2H8v3.5h2.5V21H14v-6.5h2.5L17 11h-3V9.3a.8.8 0 0 1 .5-.8Z"/></symbol>
@@ -44,7 +45,7 @@
   <div class="container header__inner">
 
     <a class="brand" href="index.html" aria-label="Auszeit Ostsee - zur Startseite">
-      <img class="brand__mark" src="images/logo.png" alt="" width="26" height="26">
+      <img class="brand__mark" src="images/logo.png" alt="" width="56" height="56">
       <span class="brand__text">
         <span class="brand__name">Auszeit</span>
         <span class="brand__sub">Ostsee</span>
@@ -58,10 +59,43 @@
     <nav class="nav" id="hauptnavigation" data-nav aria-label="Hauptnavigation">
       <ul class="nav__list">
         <li><a class="nav__link" href="index.html">Startseite</a></li>
-        <li><a class="nav__link" href="index.html#wohnungen">Wohnungen</a></li>
         <li><a class="nav__link" href="index.html#ueber-uns">&Uuml;ber uns</a></li>
+
+        <!-- Wohnungen mit Untermenue: der Link fuehrt weiterhin zur
+             Uebersicht, der Knopf daneben klappt die einzelnen Wohnungen
+             auf. Beides ist mit Maus, Tastatur und Finger bedienbar. -->
+        <li class="nav__item" data-nav-dropdown>
+          <span class="nav__group">
+            <a class="nav__link" href="index.html#wohnungen">Wohnungen</a>
+            <button class="nav__sub-toggle" type="button" data-nav-dropdown-toggle
+                    aria-expanded="false" aria-controls="untermenue-wohnungen">
+              <svg class="nav__chevron" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
+              <span class="visually-hidden">Untermen&uuml; Wohnungen aufklappen</span>
+            </button>
+          </span>
+
+          <ul class="nav__menu" id="untermenue-wohnungen">
+            <li>
+              <a class="nav__menu-link" href="wohnung-duene.html">
+                <span class="nav__menu-title">Auszeit D&uuml;ne</span>
+                <span class="nav__menu-meta">62 m&sup2; &middot; bis 4 G&auml;ste</span>
+              </a>
+            </li>
+            <li>
+              <a class="nav__menu-link" href="wohnung-hafen.html">
+                <span class="nav__menu-title">Auszeit Hafen</span>
+                <span class="nav__menu-meta">48 m&sup2; &middot; bis 3 G&auml;ste</span>
+              </a>
+            </li>
+            <li>
+              <a class="nav__menu-link nav__menu-link--all" href="index.html#wohnungen">Alle Wohnungen im &Uuml;berblick</a>
+            </li>
+          </ul>
+        </li>
+
         <li><a class="nav__link" href="index.html#kontakt">Kontakt</a></li>
       </ul>
+
       <a class="btn btn--primary nav__cta" href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">
         Auf Airbnb buchen
         <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
@@ -384,10 +418,10 @@
   <div class="container">
 
     <div class="footer__grid">
-    
+
       <div class="footer__brand">
         <a class="brand" href="index.html" aria-label="Auszeit Ostsee - zur Startseite">
-          <img class="brand__mark" src="images/logo.png" alt="" width="26" height="26">
+          <img class="brand__mark" src="images/logo.png" alt="" width="42" height="42">
           <span class="brand__text">
             <span class="brand__name">Auszeit</span>
             <span class="brand__sub">Ostsee</span>
@@ -397,6 +431,7 @@
           Zwei Ferienwohnungen in Ostseebad Boltenhagen, pers&ouml;nlich gef&uuml;hrt.
         </p>
         <div class="footer__social">
+          <!-- Platzhalter: eigene Profile eintragen oder den Block entfernen. -->
           <a href="#" aria-label="Auszeit Ostsee bei Instagram">
             <svg aria-hidden="true" focusable="false"><use href="#icon-instagram"></use></svg>
           </a>
@@ -410,21 +445,22 @@
         <h2 class="footer__title">Seite</h2>
         <ul class="footer__list">
           <li><a href="index.html">Startseite</a></li>
+          <li><a href="index.html#ueber-uns">&Uuml;ber uns</a></li>
           <li><a href="index.html#wohnungen">Wohnungen</a></li>
           <li><a href="index.html#galerie">Galerie</a></li>
           <li><a href="index.html#lage">Lage</a></li>
-          <li><a href="index.html#ueber-uns">&Uuml;ber uns</a></li>
+          <li><a href="index.html#kontakt">Kontakt</a></li>
         </ul>
       </nav>
 
-      <div>
-        <h2 class="footer__title">Buchung</h2>
+      <nav class="footer__nav" aria-label="Ferienwohnungen">
+        <h2 class="footer__title">Ferienwohnungen</h2>
         <ul class="footer__list">
+          <li><a href="wohnung-duene.html">Auszeit D&uuml;ne</a></li>
+          <li><a href="wohnung-hafen.html">Auszeit Hafen</a></li>
           <li><a href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">Airbnb-Profil</a></li>
-          <li><a href="https://www.airbnb.de/rooms/00000001" target="_blank" rel="noopener noreferrer">Auszeit D&uuml;ne</a></li>
-          <li><a href="https://www.airbnb.de/rooms/00000002" target="_blank" rel="noopener noreferrer">Auszeit Hafen</a></li>
         </ul>
-      </div>
+      </nav>
 
       <div>
         <h2 class="footer__title">Rechtliches</h2>
