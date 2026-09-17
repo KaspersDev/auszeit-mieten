@@ -14,14 +14,15 @@ Servern, solange niemand die Karte lädt.
 
 1. [Website ansehen](#website-ansehen)
 2. [Dateistruktur](#dateistruktur)
-3. [Vor dem Livegang anpassen](#vor-dem-livegang-anpassen)
-4. [Bilder austauschen](#bilder-austauschen)
-5. [Weitere Wohnung hinzufügen](#weitere-wohnung-hinzufügen)
-6. [Kontaktformular](#kontaktformular)
-7. [Karte](#karte)
-8. [Farben und Schrift](#farben-und-schrift)
-9. [Veröffentlichen](#veröffentlichen)
-10. [Barrierefreiheit und SEO](#barrierefreiheit-und-seo)
+3. [Seitenstruktur und Navigation](#seitenstruktur-und-navigation)
+4. [Vor dem Livegang anpassen](#vor-dem-livegang-anpassen)
+5. [Bilder austauschen](#bilder-austauschen)
+6. [Weitere Wohnung hinzufügen](#weitere-wohnung-hinzufügen)
+7. [Kontaktformular](#kontaktformular)
+8. [Karte](#karte)
+9. [Farben und Schrift](#farben-und-schrift)
+10. [Veröffentlichen](#veröffentlichen)
+11. [Barrierefreiheit und SEO](#barrierefreiheit-und-seo)
 
 ---
 
@@ -50,15 +51,17 @@ python3 -m http.server 8000
 ```
 .
 ├── index.html                  Startseite mit allen Abschnitten
+├── wohnung-duene.html          Detailseite Ferienwohnung „Auszeit Düne"
+├── wohnung-hafen.html          Detailseite Ferienwohnung „Auszeit Hafen"
 ├── impressum.html              Impressum nach § 5 DDG
 ├── datenschutz.html            Datenschutzerklärung nach DSGVO
 ├── favicon.svg                 Symbol für den Browser-Tab
 ├── robots.txt                  Hinweise für Suchmaschinen
 ├── sitemap.xml                 Seitenverzeichnis für Suchmaschinen
 ├── css/
-│   └── styles.css              gesamtes Layout, in 16 Abschnitte gegliedert
+│   └── styles.css              gesamtes Layout, in 17 Abschnitte gegliedert
 ├── js/
-│   └── main.js                 acht kleine Module, jeweils klar abgegrenzt
+│   └── main.js                 neun kleine Module, jeweils klar abgegrenzt
 ├── fonts/
 │   ├── inter-latin-variable.woff2
 │   └── inter-latin-ext-variable.woff2
@@ -81,6 +84,47 @@ Alle Bilder im Auslieferungszustand sind **generierte Platzhalter**. Sie
 tragen ihren Dateinamen in der unteren linken Ecke, damit sofort erkennbar
 ist, welche Datei ersetzt werden muss. Sobald ein echtes Foto eingesetzt
 wird, verschwindet die Beschriftung mit.
+
+---
+
+## Seitenstruktur und Navigation
+
+Die Website besteht aus einer Startseite mit allen Abschnitten und aus
+eigenen Seiten für die einzelnen Wohnungen:
+
+```
+index.html               Startseite
+  #start                   Kopfbereich
+  #ueber-uns               Über uns
+  #wohnungen               Übersicht beider Wohnungen
+  #galerie                 Galerie
+  #lage                    Lage und Umgebung
+  #kontakt                 Kontakt
+
+wohnung-duene.html       Detailseite „Auszeit Düne"
+wohnung-hafen.html       Detailseite „Auszeit Hafen"
+impressum.html           Impressum
+datenschutz.html         Datenschutzerklärung
+```
+
+Die Hauptnavigation steht in dieser Reihenfolge: **Startseite · Über uns ·
+Wohnungen · Kontakt**. „Wohnungen" ist ein aufklappbarer Punkt und besteht
+aus zwei Bedienelementen:
+
+- der **Link** führt zur Übersicht `index.html#wohnungen`,
+- der **Knopf** daneben (Pfeil nach unten) klappt die Liste der einzelnen
+  Wohnungen auf.
+
+Diese Trennung ist Absicht. Wäre der Name selbst der Auslöser, müsste man
+sich auf dem Touchscreen zwischen „Übersicht öffnen" und „Liste aufklappen"
+entscheiden — so geht beides. Am Rechner öffnet die Liste zusätzlich beim
+Überfahren mit der Maus, mit der Tastatur über Enter auf dem Knopf; `Esc`
+schließt sie wieder.
+
+Der Kopf- und Fußbereich ist auf **allen** Seiten identisch. Wird dort etwas
+geändert, muss die Änderung in `index.html`, `wohnung-duene.html`,
+`wohnung-hafen.html`, `impressum.html` und `datenschutz.html` nachgezogen
+werden — die Seite ist bewusst rein statisch und hat keine Vorlagen-Technik.
 
 ---
 
@@ -189,11 +233,20 @@ drei Wohnungen entstehen automatisch drei Spalten, bei vier zwei Reihen.
    einfügen.
 3. Im neuen Block anpassen: Bildpfad und `alt`, Name in `<h3>`, Preis,
    Lagezeile, Beschreibung, die Angaben in `.apartment__specs`, die Liste
-   `.amenities` und den Airbnb-Link.
+   `.amenities`, den Link auf die neue Detailseite und den Airbnb-Link.
 4. `reveal--delay-2` als Klasse ergänzen, damit die Karte beim Scrollen
    leicht versetzt erscheint (`reveal--delay-1` hat die zweite Karte).
-5. Optional: den Eintrag im Footer unter „Buchung" und die Zahl im Abschnitt
-   „Über uns" (`2 Ferienwohnungen`) sowie in der Kopfzeile mitziehen.
+5. **Detailseite anlegen:** `wohnung-duene.html` kopieren, zum Beispiel nach
+   `wohnung-strand.html`, und darin Titel, `<link rel="canonical">`, die
+   Open-Graph-Angaben, den JSON-LD-Block sowie alle Inhalte ersetzen. Die
+   Karte „Die andere Wohnung" am Seitenende ebenfalls anpassen.
+6. **Untermenü ergänzen:** in *allen* HTML-Dateien im Block
+   `<ul class="nav__menu" id="untermenue-wohnungen">` einen Eintrag nach dem
+   Muster der bestehenden hinzufügen. Am CSS und am JavaScript ist nichts zu
+   ändern — beides arbeitet mit beliebig vielen Einträgen.
+7. `sitemap.xml` und die Liste `FILES` in `tools/build.js` erweitern.
+8. Optional: den Eintrag im Footer unter „Ferienwohnungen" und die Zahl im
+   Abschnitt „Über uns" (`2 Ferienwohnungen`) mitziehen.
 
 Verfügbare Symbole für die Ausstattung stehen ganz oben in `index.html` in
 der Icon-Sammlung: `wifi`, `kitchen`, `balcony`, `sea`, `washer`, `parking`,
@@ -248,10 +301,23 @@ Alle Farben und Abstände liegen als CSS-Variablen ganz oben in
 gesamte Seite aus.
 
 ```css
---c-sea:  #2f6a86;   /* Akzentfarbe, Schaltflächen, Links */
---c-ink:  #14232e;   /* Überschriften, Fußzeile */
---c-sand: #e8e0d4;   /* warmer Sandton */
+--c-sea:   #2b7091;   /* Leitfarbe: Schaltflächen, Links, Symbole */
+--c-amber: #bf7238;   /* zweiter Akzent: Preise, Marker, Zierstriche */
+--c-ink:   #16262f;   /* Überschriften, Fußzeile */
+--c-page:  #fdfaf6;   /* warme Grundfläche statt reinem Weiß */
+--c-sand:  #ecdfce;   /* warmer Sandton */
 ```
+
+Daneben stehen dort die Verläufe (`--grad-sea`, `--grad-tint`,
+`--grad-accent`), die Radien (`--radius`, `--radius-lg`, `--radius-pill`)
+und die Schatten (`--shadow-sm` bis `--shadow-lg`, `--shadow-sea`). Wer die
+Seite ruhiger haben möchte, setzt `--radius` auf einen kleineren Wert und
+ersetzt `--grad-sea` durch eine einfarbige Angabe — mehr ist dafür nicht
+nötig.
+
+**Wichtig:** `--header-h` muss zur Größe des Logos passen (`.brand__mark`).
+Beide Werte hängen zusammen, weil davon die Sprungmarken und die Höhe des
+mobilen Menüs abhängen.
 
 Die Schrift **Inter** wird lokal aus `fonts/` geladen. Das ist bewusst so:
 Bindet man Google Fonts direkt ein, wird bei jedem Seitenaufruf die

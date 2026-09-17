@@ -69,7 +69,7 @@
       "@type": "Apartment",
       "name": "Auszeit Duene",
       "description": "62 Quadratmeter, zwei Schlafzimmer, Suedbalkon, 300 Meter zum Strandaufgang.",
-      "url": "https://www.auszeit-mieten.de/#wohnungen",
+      "url": "https://www.auszeit-mieten.de/wohnung-duene.html",
       "image": "https://www.auszeit-mieten.de/images/wohnung1.jpg",
       "floorSize": { "@type": "QuantitativeValue", "value": 62, "unitCode": "MTK" },
       "numberOfRooms": 3,
@@ -79,7 +79,7 @@
       "@type": "Apartment",
       "name": "Auszeit Hafen",
       "description": "48 Quadratmeter im Dachgeschoss mit Dachterrasse und Blick ueber den Hafen.",
-      "url": "https://www.auszeit-mieten.de/#wohnungen",
+      "url": "https://www.auszeit-mieten.de/wohnung-hafen.html",
       "image": "https://www.auszeit-mieten.de/images/wohnung2.jpg",
       "floorSize": { "@type": "QuantitativeValue", "value": 48, "unitCode": "MTK" },
       "numberOfRooms": 2,
@@ -115,6 +115,7 @@
     <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M20 10.5c0 5.5-8 11.5-8 11.5s-8-6-8-11.5a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10.3" r="2.8"/></symbol>
     <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
     <symbol id="icon-phone" viewBox="0 0 24 24"><path d="M21 16.5v2.6a1.9 1.9 0 0 1-2.1 1.9 18.8 18.8 0 0 1-8.2-2.9 18.5 18.5 0 0 1-5.7-5.7A18.8 18.8 0 0 1 2.1 4.1 1.9 1.9 0 0 1 4 2h2.6a1.9 1.9 0 0 1 1.9 1.6c.1 1 .4 1.9.7 2.8a1.9 1.9 0 0 1-.4 2L7.7 9.6a15 15 0 0 0 5.7 5.7l1.2-1.1a1.9 1.9 0 0 1 2-.4c.9.3 1.8.6 2.8.7a1.9 1.9 0 0 1 1.6 2Z"/></symbol>
+    <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7"/></symbol>
     <symbol id="icon-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1.9 1.9 0 0 1-1.9 1.9H5A1.9 1.9 0 0 1 3.1 19V7.9A1.9 1.9 0 0 1 5 6h5"/></symbol>
     <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
     <symbol id="icon-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
@@ -135,7 +136,7 @@
   <div class="container header__inner">
 
     <a class="brand" href="index.html" aria-label="Auszeit Ostsee - zur Startseite">
-      <img class="brand__mark" src="images/logo.png" alt="" width="52" height="52">
+      <img class="brand__mark" src="images/logo.png" alt="" width="56" height="56">
       <span class="brand__text">
         <span class="brand__name">Auszeit</span>
         <span class="brand__sub">Ostsee</span>
@@ -150,6 +151,39 @@
       <ul class="nav__list">
         <li><a class="nav__link" href="#start">Startseite</a></li>
         <li><a class="nav__link" href="#ueber-uns">&Uuml;ber uns</a></li>
+
+        <!-- Wohnungen mit Untermenue: der Link fuehrt weiterhin zur
+             Uebersicht, der Knopf daneben klappt die einzelnen Wohnungen
+             auf. Beides ist mit Maus, Tastatur und Finger bedienbar. -->
+        <li class="nav__item" data-nav-dropdown>
+          <span class="nav__group">
+            <a class="nav__link" href="#wohnungen">Wohnungen</a>
+            <button class="nav__sub-toggle" type="button" data-nav-dropdown-toggle
+                    aria-expanded="false" aria-controls="untermenue-wohnungen">
+              <svg class="nav__chevron" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
+              <span class="visually-hidden">Untermen&uuml; Wohnungen aufklappen</span>
+            </button>
+          </span>
+
+          <ul class="nav__menu" id="untermenue-wohnungen">
+            <li>
+              <a class="nav__menu-link" href="wohnung-duene.html">
+                <span class="nav__menu-title">Auszeit D&uuml;ne</span>
+                <span class="nav__menu-meta">62 m&sup2; &middot; bis 4 G&auml;ste</span>
+              </a>
+            </li>
+            <li>
+              <a class="nav__menu-link" href="wohnung-hafen.html">
+                <span class="nav__menu-title">Auszeit Hafen</span>
+                <span class="nav__menu-meta">48 m&sup2; &middot; bis 3 G&auml;ste</span>
+              </a>
+            </li>
+            <li>
+              <a class="nav__menu-link nav__menu-link--all" href="#wohnungen">Alle Wohnungen im &Uuml;berblick</a>
+            </li>
+          </ul>
+        </li>
+
         <li><a class="nav__link" href="#kontakt">Kontakt</a></li>
       </ul>
       <!-- Fuehrt zur Wohnungsuebersicht, dort steht je Wohnung der eigene Airbnb-Link. -->
@@ -272,9 +306,16 @@
   <!-- ================================================================
        Wohnungen
 
-       Weitere Wohnung hinzufuegen: den Block <article class="apartment">
-       kopieren, Bild, Texte und den Airbnb-Link austauschen. Das Raster
-       ordnet sich selbst neu, es ist keine Aenderung am CSS noetig.
+       Weitere Wohnung hinzufuegen:
+         1. Block <article class="apartment"> kopieren, Bild, Texte und
+            den Airbnb-Link austauschen.
+         2. wohnung-duene.html als Vorlage kopieren, z. B. nach
+            wohnung-strand.html, und die Inhalte ersetzen.
+         3. Den neuen Eintrag im Untermenue "Wohnungen" ergaenzen -
+            in index.html, impressum.html, datenschutz.html und in
+            allen Wohnungsseiten (der Kopfbereich ist ueberall gleich).
+         4. sitemap.xml und tools/build.js ergaenzen.
+       Das Raster ordnet sich selbst neu, am CSS ist nichts zu aendern.
        ================================================================ -->
   <section class="section section--tint" id="wohnungen" aria-labelledby="wohnungen-titel">
     <div class="container">
@@ -284,8 +325,9 @@
         <h2 id="wohnungen-titel" class="title-lg">Unsere Ferienwohnungen</h2>
         <p class="lead" style="margin-top: 1rem;">
           Zwei Wohnungen in einem ruhigen Wohngebiet, beide mit eigenem Zugang
-          und Stellplatz. Verf&uuml;gbarkeit und Preise sehen Sie tagesaktuell
-          bei Airbnb.
+          und Stellplatz. Auf der jeweiligen Detailseite finden Sie alle
+          Angaben zu Raumaufteilung und Ausstattung; Verf&uuml;gbarkeit und
+          Preise sehen Sie tagesaktuell bei Airbnb.
         </p>
       </div>
 
@@ -336,9 +378,14 @@
             </ul>
 
             <div class="apartment__actions">
+              <a class="btn btn--primary btn--block" href="wohnung-duene.html">
+                Wohnung ansehen
+                <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-arrow-right"></use></svg>
+                <span class="visually-hidden">- Auszeit D&uuml;ne</span>
+              </a>
               <!-- Platzhalter: Airbnb-Link der Wohnung eintragen. -->
-              <a class="btn btn--primary btn--block" href="https://www.airbnb.de/rooms/00000001" target="_blank" rel="noopener noreferrer">
-                Auf Airbnb ansehen
+              <a class="btn btn--secondary btn--block" href="https://www.airbnb.de/rooms/00000001" target="_blank" rel="noopener noreferrer">
+                Auf Airbnb buchen
                 <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
                 <span class="visually-hidden">- Auszeit D&uuml;ne (oeffnet in neuem Tab)</span>
               </a>
@@ -392,9 +439,14 @@
             </ul>
 
             <div class="apartment__actions">
+              <a class="btn btn--primary btn--block" href="wohnung-hafen.html">
+                Wohnung ansehen
+                <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-arrow-right"></use></svg>
+                <span class="visually-hidden">- Auszeit Hafen</span>
+              </a>
               <!-- Platzhalter: Airbnb-Link der Wohnung eintragen. -->
-              <a class="btn btn--primary btn--block" href="https://www.airbnb.de/rooms/00000002" target="_blank" rel="noopener noreferrer">
-                Auf Airbnb ansehen
+              <a class="btn btn--secondary btn--block" href="https://www.airbnb.de/rooms/00000002" target="_blank" rel="noopener noreferrer">
+                Auf Airbnb buchen
                 <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
                 <span class="visually-hidden">- Auszeit Hafen (oeffnet in neuem Tab)</span>
               </a>
@@ -688,7 +740,7 @@
 
       <div class="footer__brand">
         <a class="brand" href="index.html" aria-label="Auszeit Ostsee - zur Startseite">
-          <img class="brand__mark" src="images/logo.png" alt="" width="26" height="26">
+          <img class="brand__mark" src="images/logo.png" alt="" width="42" height="42">
           <span class="brand__text">
             <span class="brand__name">Auszeit</span>
             <span class="brand__sub">Ostsee</span>
@@ -712,21 +764,22 @@
         <h2 class="footer__title">Seite</h2>
         <ul class="footer__list">
           <li><a href="#start">Startseite</a></li>
+          <li><a href="#ueber-uns">&Uuml;ber uns</a></li>
           <li><a href="#wohnungen">Wohnungen</a></li>
           <li><a href="#galerie">Galerie</a></li>
           <li><a href="#lage">Lage</a></li>
-          <li><a href="#ueber-uns">&Uuml;ber uns</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
         </ul>
       </nav>
 
-      <div>
-        <h2 class="footer__title">Buchung</h2>
+      <nav class="footer__nav" aria-label="Ferienwohnungen">
+        <h2 class="footer__title">Ferienwohnungen</h2>
         <ul class="footer__list">
+          <li><a href="wohnung-duene.html">Auszeit D&uuml;ne</a></li>
+          <li><a href="wohnung-hafen.html">Auszeit Hafen</a></li>
           <li><a href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">Airbnb-Profil</a></li>
-          <li><a href="https://www.airbnb.de/rooms/00000001" target="_blank" rel="noopener noreferrer">Auszeit D&uuml;ne</a></li>
-          <li><a href="https://www.airbnb.de/rooms/00000002" target="_blank" rel="noopener noreferrer">Auszeit Hafen</a></li>
         </ul>
-      </div>
+      </nav>
 
       <div>
         <h2 class="footer__title">Rechtliches</h2>

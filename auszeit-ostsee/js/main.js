@@ -10,6 +10,7 @@
  * Module:
  *   initHeader          Sticky-Header mit Scroll-Zustand
  *   initMobileNav       Mobiles Menue inkl. Fokus-Verwaltung
+ *   initNavDropdown     Untermenue "Wohnungen" im Kopfbereich
  *   initScrollSpy       Aktiver Navigationspunkt beim Scrollen
  *   initReveal          Sanftes Einblenden beim Scrollen
  *   initLightbox        Galerie-Lightbox mit Tastatursteuerung
@@ -42,7 +43,14 @@
   // Haelt die Tab-Reihenfolge innerhalb eines geoeffneten Dialogs.
   function trapFocus(container, event) {
     var items = $$(FOCUSABLE, container).filter(function (el) {
-      return el.offsetWidth > 0 || el.offsetHeight > 0;
+      if (!el.getClientRects().length) {
+        return false;
+      }
+      // Ein eingeklapptes Untermenue ist zwar noch vermessen, aber auf
+      // visibility:hidden gesetzt - solche Eintraege gehoeren nicht in
+      // die Tabulator-Reihenfolge.
+      var style = window.getComputedStyle ? window.getComputedStyle(el) : null;
+      return !style || style.visibility !== "hidden";
     });
     if (!items.length) {
       return;
@@ -134,7 +142,11 @@
 
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") {
-        close(true);
+        // Ist ein Untermenue offen, schliesst Escape zuerst nur dieses -
+        // das komplette Menue bleibt stehen.
+        if (!$("[data-nav-dropdown].is-open")) {
+          close(true);
+        }
       } else if (event.key === "Tab" && nav.classList.contains("is-open")) {
         trapFocus(nav, event);
       }
@@ -145,6 +157,112 @@
       if (event.matches) {
         close(false);
       }
+    };
+    if (desktop.addEventListener) {
+      desktop.addEventListener("change", onChange);
+    } else if (desktop.addListener) {
+      desktop.addListener(onChange);
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // Untermenue im Kopfbereich
+  //
+  // Der Navigationspunkt besteht aus zwei Bedienelementen: der Link
+  // fuehrt zur Uebersicht, der Knopf daneben klappt die Liste der
+  // einzelnen Wohnungen auf. Dadurch bleibt beides erreichbar - auf dem
+  // Touchscreen genauso wie mit der Tastatur.
+  // ------------------------------------------------------------------
+
+  function initNavDropdown() {
+    var items = $$("[data-nav-dropdown]");
+    if (!items.length) {
+      return;
+    }
+
+    var desktop = window.matchMedia("(min-width: 861px)");
+
+    function isDesktop() {
+      return desktop.matches;
+    }
+
+    function setOpen(item, open) {
+      var toggle = $("[data-nav-dropdown-toggle]", item);
+      item.classList.toggle("is-open", open);
+      if (toggle) {
+        toggle.setAttribute("aria-expanded", String(open));
+      }
+    }
+
+    function closeAll(except) {
+      items.forEach(function (item) {
+        if (item !== except) {
+          setOpen(item, false);
+        }
+      });
+    }
+
+    items.forEach(function (item) {
+      var toggle = $("[data-nav-dropdown-toggle]", item);
+      if (!toggle) {
+        return;
+      }
+
+      toggle.addEventListener("click", function () {
+        var open = toggle.getAttribute("aria-expanded") !== "true";
+        closeAll(item);
+        setOpen(item, open);
+      });
+
+      // Auf dem Desktop oeffnet bereits das CSS beim Ueberfahren. Hier
+      // wird nur aria-expanded nachgezogen, damit Vorlesesoftware und
+      // Darstellung denselben Zustand melden.
+      item.addEventListener("mouseenter", function () {
+        if (isDesktop()) {
+          closeAll(item);
+          setOpen(item, true);
+        }
+      });
+
+      item.addEventListener("mouseleave", function () {
+        if (isDesktop()) {
+          setOpen(item, false);
+        }
+      });
+
+      // Verlaesst der Fokus den Navigationspunkt, schliesst das Menue.
+      item.addEventListener("focusout", function (event) {
+        if (isDesktop() && !item.contains(event.relatedTarget)) {
+          setOpen(item, false);
+        }
+      });
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest("[data-nav-dropdown]")) {
+        closeAll(null);
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape") {
+        return;
+      }
+      items.forEach(function (item) {
+        if (!item.classList.contains("is-open")) {
+          return;
+        }
+        setOpen(item, false);
+        var toggle = $("[data-nav-dropdown-toggle]", item);
+        if (toggle && item.contains(document.activeElement)) {
+          toggle.focus();
+        }
+      });
+    });
+
+    // Beim Wechsel der Bildschirmbreite darf kein Zustand haengen bleiben.
+    var onChange = function () {
+      closeAll(null);
     };
     if (desktop.addEventListener) {
       desktop.addEventListener("change", onChange);
@@ -520,6 +638,7 @@
   function init() {
     initHeader();
     initMobileNav();
+    initNavDropdown();
     initScrollSpy();
     initReveal();
     initLightbox();
