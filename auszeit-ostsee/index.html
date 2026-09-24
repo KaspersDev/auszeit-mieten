@@ -28,7 +28,8 @@
 <link rel="apple-touch-icon" href="images/logo.png">
 
 <!-- Schriften werden lokal ausgeliefert, es besteht keine Verbindung zu Dritten. -->
-<link rel="preload" href="fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/figtree-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/fraunces-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/styles.css">
 
 <!-- Markiert die Seite als JavaScript-faehig, bevor der Inhalt gezeichnet wird.
@@ -186,11 +187,11 @@
 
         <li><a class="nav__link" href="#kontakt">Kontakt</a></li>
       </ul>
-      <!-- Fuehrt zur Wohnungsuebersicht, dort steht je Wohnung der eigene Airbnb-Link. -->
-      <a class="btn btn--primary nav__cta" href="#wohnungen">
-        Auf Airbnb buchen
-        <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-arrow-right"></use></svg>
-        <span class="visually-hidden">(zu den Wohnungen mit den Airbnb-Links)</span>
+
+      <a class="btn btn--primary nav__cta" href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">
+        Bei Airbnb ansehen
+        <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
+        <span class="visually-hidden">(oeffnet in neuem Tab)</span>
       </a>
     </nav>
 
@@ -220,7 +221,7 @@
 
         <div class="btn-row">
           <a class="btn btn--primary" href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">
-            Jetzt auf Airbnb buchen
+            Freie Termine ansehen
             <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
             <span class="visually-hidden">(oeffnet in neuem Tab)</span>
           </a>
@@ -322,7 +323,7 @@
 
       <div class="section__head">
         <span class="eyebrow">Unterk&uuml;nfte</span>
-        <h2 id="wohnungen-titel" class="title-lg">Unsere Ferienwohnungen</h2>
+        <h2 id="wohnungen-titel" class="title-lg">Zwei Wohnungen, ein Haus</h2>
         <p class="lead" style="margin-top: 1rem;">
           Zwei Wohnungen in einem ruhigen Wohngebiet, beide mit eigenem Zugang
           und Stellplatz. Auf der jeweiligen Detailseite finden Sie alle
@@ -344,7 +345,7 @@
           <div class="apartment__body">
             <div class="apartment__header">
               <h3 class="title-md">Auszeit D&uuml;ne</h3>
-              <p class="apartment__price">ab 95 &euro; <span>/ Nacht</span></p>
+              <p class="apartment__price">ab 95 &euro; <span>die Nacht</span></p>
             </div>
 
             <p class="apartment__location">
@@ -385,7 +386,7 @@
               </a>
               <!-- Platzhalter: Airbnb-Link der Wohnung eintragen. -->
               <a class="btn btn--secondary btn--block" href="https://www.airbnb.de/rooms/00000001" target="_blank" rel="noopener noreferrer">
-                Auf Airbnb buchen
+                Bei Airbnb ansehen
                 <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
                 <span class="visually-hidden">- Auszeit D&uuml;ne (oeffnet in neuem Tab)</span>
               </a>
@@ -405,7 +406,7 @@
           <div class="apartment__body">
             <div class="apartment__header">
               <h3 class="title-md">Auszeit Hafen</h3>
-              <p class="apartment__price">ab 79 &euro; <span>/ Nacht</span></p>
+              <p class="apartment__price">ab 79 &euro; <span>die Nacht</span></p>
             </div>
 
             <p class="apartment__location">
@@ -446,7 +447,7 @@
               </a>
               <!-- Platzhalter: Airbnb-Link der Wohnung eintragen. -->
               <a class="btn btn--secondary btn--block" href="https://www.airbnb.de/rooms/00000002" target="_blank" rel="noopener noreferrer">
-                Auf Airbnb buchen
+                Bei Airbnb ansehen
                 <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
                 <span class="visually-hidden">- Auszeit Hafen (oeffnet in neuem Tab)</span>
               </a>
@@ -467,7 +468,7 @@
 
       <div class="section__head">
         <span class="eyebrow">Eindr&uuml;cke</span>
-        <h2 id="galerie-titel" class="title-lg">Wohnungen und Umgebung</h2>
+        <h2 id="galerie-titel" class="title-lg">Ein Blick ins Haus und nach drau&szlig;en</h2>
         <p class="lead" style="margin-top: 1rem;">
           Ein Blick in die R&auml;ume und auf die Gegend rund um Boltenhagen.
         </p>
@@ -528,7 +529,7 @@
 
         <div class="reveal">
           <span class="eyebrow">Lage</span>
-          <h2 id="lage-titel" class="title-lg">Boltenhagen und Umgebung</h2>
+          <h2 id="lage-titel" class="title-lg">Dreihundert Meter bis zum Wasser</h2>
           <p class="lead" style="margin-block: 1rem 1.5rem;">
             Das Haus liegt in einer ruhigen Seitenstra&szlig;e, wenige Gehminuten
             vom Strand und vom Ortskern entfernt.
@@ -666,7 +667,7 @@
 
             <div>
               <button class="btn btn--primary" type="submit">
-                Nachricht senden
+                Nachricht abschicken
                 <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-arrow-right"></use></svg>
               </button>
             </div>
@@ -717,7 +718,7 @@
 
           <div class="btn-row" style="margin-top: 2rem;">
             <a class="btn btn--secondary" href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">
-              Zu unserem Airbnb-Profil
+              Beide Wohnungen bei Airbnb
               <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
               <span class="visually-hidden">(oeffnet in neuem Tab)</span>
             </a>

@@ -1,0 +1,15 @@
+# Build-Ausgabe (entsteht mit: npm run build)
+dist/
+
+# Betriebssysteme
+.DS_Store
+Thumbs.db
+
+# Editoren
+.vscode/
+.idea/
+*.swp
+
+# Abhaengigkeiten (werden fuer den Build nicht benoetigt)
+node_modules/
+package-lock.json

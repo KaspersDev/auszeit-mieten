@@ -296,34 +296,84 @@ einbinden — dann entfällt Abschnitt 7 der Datenschutzerklärung.
 
 ## Farben und Schrift
 
-Alle Farben und Abstände liegen als CSS-Variablen ganz oben in
-`css/styles.css` unter `:root`. Eine Änderung dort wirkt sich auf die
+Alle Farben, Abstände, Radien und Schatten liegen als CSS-Variablen ganz oben
+in `css/styles.css` unter `:root`. Eine Änderung dort wirkt sich auf die
 gesamte Seite aus.
 
+### Palette
+
+Grundlage ist eine vorgegebene Palette aus fünf Tönen. Drei davon liegen auf
+demselben kalten Farbton (195°) — deshalb tragen hier **warme Ableitungen die
+Flächen**, und die kalten Töne nur noch Akzente. Sonst wirkt die Seite
+klinisch.
+
 ```css
---c-sea:   #2b7091;   /* Leitfarbe: Schaltflächen, Links, Symbole */
---c-amber: #bf7238;   /* zweiter Akzent: Preise, Marker, Zierstriche */
---c-ink:   #16262f;   /* Überschriften, Fußzeile */
---c-page:  #fdfaf6;   /* warme Grundfläche statt reinem Weiß */
---c-sand:  #ecdfce;   /* warmer Sandton */
+--c-page:  #faf8f4;   /* warmes Off-White statt reinem Weiß         */
+--c-surface: #fffefb; /* Karten und erhabene Flächen                */
+--c-sand-soft: #f2ede4; /* zweiter Flächenton, Abschnittswechsel    */
+--c-greige: #c6c3b5;  /* Vorgabe: Bildrahmen, Fußzeile              */
+--c-ink:   #36393a;   /* Vorgabe: Überschriften                     */
+--c-body:  #4a4742;   /* Fließtext, warm abgestimmt                 */
+--c-sea:   #4c6e7a;   /* Buttons und Links                          */
+--c-sea-light: #658894; /* Markenton, nur Flächen und Dekor         */
+--c-amber: #a9542f;   /* Terrakotta: Preise, Marker, Zierstriche    */
+--c-sun:   #d9a962;   /* Sonnenocker: Badges mit dunklem Text       */
 ```
 
-Daneben stehen dort die Verläufe (`--grad-sea`, `--grad-tint`,
-`--grad-accent`), die Radien (`--radius`, `--radius-lg`, `--radius-pill`)
-und die Schatten (`--shadow-sm` bis `--shadow-lg`, `--shadow-sea`). Wer die
-Seite ruhiger haben möchte, setzt `--radius` auf einen kleineren Wert und
-ersetzt `--grad-sea` durch eine einfarbige Angabe — mehr ist dafür nicht
-nötig.
+**Zwei Regeln, die nicht verhandelbar sind** — beide sind gemessen:
+
+- `--c-sea-light` (`#658894`) trägt **niemals kleinen weißen Text**. Das
+  Verhältnis beträgt nur 3,78:1, nötig sind 4,5:1. Für alles Interaktive ist
+  `--c-sea` da (5,45:1).
+- `--c-decor-grey` (`#a09d97`) ist **keine Textfarbe**. Auf `--c-page`
+  erreicht es 2,55:1. Sekundärtext nutzt `--c-muted` (5,06:1).
+
+Sämtliche Textfarben der Seite erfüllen WCAG AA, auch die weiße Schrift über
+dem Kopfbild und über der Karte.
+
+### Form
+
+`--radius` (14px), `--radius-lg` (22px) und `--radius-arch` bestimmen die
+Kanten. Der Bogen `--radius-arch` ist die Signaturform und liegt bewusst nur
+auf **einem** Bild pro Seite — dem Gastgeberfoto. Mehr davon wirkt dekorativ.
+
+Karten haben **keine Rahmen**, sondern Schatten (`--shadow-md`). Das ist der
+größte Einzelgewinn gegen die klinische Wirkung: eine Karte soll auf der
+Fläche liegen, nicht aus ihr ausgeschnitten sein. Die Schatten sind warm
+getönt (`rgba(74, 71, 66, …)`) — ein blaugrauer Schatten lässt jede Fläche
+technisch wirken.
+
+Über der ganzen Seite liegt ein feines Korn (`--grain-opacity`, 3,5 %). Es
+nimmt den Flächen die digitale Makellosigkeit. Wer es nicht möchte, setzt den
+Wert auf `0`.
 
 **Wichtig:** `--header-h` muss zur Größe des Logos passen (`.brand__mark`).
 Beide Werte hängen zusammen, weil davon die Sprungmarken und die Höhe des
 mobilen Menüs abhängen.
 
-Die Schrift **Inter** wird lokal aus `fonts/` geladen. Das ist bewusst so:
-Bindet man Google Fonts direkt ein, wird bei jedem Seitenaufruf die
-IP-Adresse der Besucher an Google übertragen — dafür wäre eine Einwilligung
-nötig. Wer die Schrift wechselt, sollte die neue Datei ebenfalls lokal
-ablegen und die beiden `@font-face`-Regeln in `css/styles.css` anpassen.
+### Schriften
+
+Zwei Familien, beide lokal aus `fonts/` geladen:
+
+- **Fraunces** trägt die Überschriften — eine weiche Serife mit den Achsen
+  `SOFT` (rundet die Endungen) und `WONK` (leichte Unregelmäßigkeit). Sie
+  läuft auf Gewicht 400–500; eine fette Serife wirkt korporativ.
+- **Figtree** trägt den Lauftext — humanistisch, hohe x-Höhe, ruhig lesbar
+  bei 17px und Zeilenhöhe 1,7.
+
+Die lokale Auslieferung ist Absicht: Bindet man Google Fonts direkt ein, wird
+bei jedem Seitenaufruf die IP-Adresse der Besucher an Google übertragen —
+dafür wäre eine Einwilligung nötig. Wer eine Schrift wechselt, legt die neue
+Datei ebenfalls in `fonts/` ab und passt die `@font-face`-Regeln in
+`css/styles.css` an.
+
+### Beim Austausch des Kopfbildes beachten
+
+Über `hero.jpg` liegt weiße Schrift. Der dunkle Verlauf darüber
+(`.hero__scrim`) ist so eingestellt, dass die Schrift WCAG AA erreicht —
+gemessen gegen den hellsten Punkt hinter jedem Textelement. Ist Ihr Foto in
+der linken Bildhälfte deutlich heller als der Platzhalter, prüfen Sie die
+Lesbarkeit und erhöhen Sie die Deckwerte im waagerechten Verlauf.
 
 ---
 

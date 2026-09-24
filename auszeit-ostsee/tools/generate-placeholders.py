@@ -178,14 +178,14 @@ def interior_scene(w, h, wall, floor, light, accent, seed):
 
 def map_scene(w, h):
     random.seed(404)
-    img = Image.new("RGB", (w, h), hex_rgb("#eae4d9"))
+    img = Image.new("RGB", (w, h), hex_rgb("#efe9dd"))
     draw = ImageDraw.Draw(img)
 
     # Ostsee
     draw.polygon([(0, h * 0.30), (w * 0.30, h * 0.22), (w * 0.62, h * 0.30),
-                  (w, h * 0.20), (w, 0), (0, 0)], fill=hex_rgb("#b6cbd6"))
+                  (w, h * 0.20), (w, 0), (0, 0)], fill=hex_rgb("#aec2ca"))
     draw.polygon([(0, h * 0.33), (w * 0.30, h * 0.25), (w * 0.62, h * 0.33),
-                  (w, h * 0.23), (w, h * 0.18), (0, h * 0.26)], fill=hex_rgb("#dcd3c2"))
+                  (w, h * 0.23), (w, h * 0.18), (0, h * 0.26)], fill=hex_rgb("#e0d8c8"))
 
     # Strassen
     for frac in (0.46, 0.66, 0.86):
@@ -198,7 +198,7 @@ def map_scene(w, h):
     # Gruenflaechen
     for box in [(w * 0.05, h * 0.52, w * 0.24, h * 0.74),
                 (w * 0.70, h * 0.40, w * 0.94, h * 0.62)]:
-        draw.rounded_rectangle(box, radius=round(h * 0.03), fill=hex_rgb("#d3d9c4"))
+        draw.rounded_rectangle(box, radius=round(h * 0.03), fill=hex_rgb("#d6d5c1"))
 
     img = img.filter(ImageFilter.GaussianBlur(0.4))
     layer = img.convert("RGBA")
@@ -207,8 +207,8 @@ def map_scene(w, h):
     d = ImageDraw.Draw(layer)
     cx, cy, r = w * 0.47, h * 0.55, h * 0.055
     d.ellipse((cx - r * 2.2, cy - r * 2.2, cx + r * 2.2, cy + r * 2.2),
-              fill=hex_rgb("#2f6a86") + (48,))
-    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=hex_rgb("#2f6a86") + (255,),
+              fill=hex_rgb("#4c6e7a") + (48,))
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=hex_rgb("#4c6e7a") + (255,),
               outline=(255, 255, 255, 255), width=max(2, round(h * 0.007)))
     return layer
 
