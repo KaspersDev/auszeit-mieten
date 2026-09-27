@@ -243,6 +243,26 @@ def build():
     finish(map_scene(1600, 900), "karte-platzhalter.jpg",
            os.path.join(IMAGES, "karte-platzhalter.jpg"), soften=0.6)
 
+    # Whirlpool-Anhaenger. Eigener Unterordner, damit die Bilder des
+    # Angebots beisammen liegen und leicht auszutauschen sind.
+    WHIRLPOOL = os.path.join(IMAGES, "whirlpool")
+    finish(coast_scene(1800, 1013, ["#cbd9e4", "#ded9d2", "#ecdfc9"],
+                       ["#8c8377", "#6f6558", "#544b40"], 0.55, "#f3e3c6", 71),
+           "whirlpool-hero.jpg", os.path.join(WHIRLPOOL, "whirlpool-hero.jpg"), soften=1.4)
+
+    whirlpool = [
+        ("whirlpool-01.jpg", coast_scene(1400, 1050, ["#c7d6e2", "#dcdcd6", "#ecdfc8"],
+                                         ["#8e857a", "#70675b", "#554c42"], 0.52, "#f2e2c4", 72)),
+        ("whirlpool-02.jpg", interior_scene(1400, 1050, ["#efe8dc", "#e2d8c8"],
+                                            ["#b9a88f", "#a6937c"], "#fff4e0", "#8fa6ae", 73)),
+        ("whirlpool-03.jpg", coast_scene(1400, 1050, ["#bed0de", "#d6d6d0", "#e9dcc4"],
+                                         ["#7f8d92", "#5f6d72", "#47535a"], 0.46, "#efe0c6", 74)),
+        ("whirlpool-04.jpg", interior_scene(1400, 1050, ["#ece6db", "#ded4c4"],
+                                            ["#b5a389", "#a08d76"], "#fff3de", "#93a9b1", 75)),
+    ]
+    for name, scene in whirlpool:
+        finish(scene, name, os.path.join(WHIRLPOOL, name), soften=1.2)
+
     gallery = [
         ("galerie-01.jpg", coast_scene(1400, 1050, ["#c9daea", "#dfe3e2", "#ece3d4"],
                                        ["#839dab", "#527483", "#375563"], 0.52, "#f4e8d4", 51)),

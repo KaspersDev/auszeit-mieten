@@ -566,6 +566,143 @@ hr {
 }
 
 /* --------------------------------------------------------------------------
+   5b. Auswahlschalter fuer die drei Angebote
+
+   Wird an zwei Stellen verwendet: im Abschnitt Lage und im Anfrageformular.
+   Aufgebaut als Tabliste, damit Screenreader die Zusammengehoerigkeit
+   vorlesen und die Pfeiltasten funktionieren.
+   -------------------------------------------------------------------------- */
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+  max-width: 560px;
+  margin-bottom: var(--space-xl);
+  padding: 4px;
+  background-color: var(--c-sand-soft);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 2px rgba(74, 71, 66, 0.06);
+}
+
+.segmented--center {
+  margin-inline: auto;
+}
+
+.segmented__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 0.5rem 0.5rem;
+  background: none;
+  border: 0;
+  border-radius: calc(var(--radius) - 4px);
+  color: var(--c-muted);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition),
+    box-shadow var(--transition);
+}
+
+.segmented__option:hover {
+  color: var(--c-ink);
+}
+
+/* Der gewaehlte Punkt hebt sich als eigene Flaeche ab - nicht nur durch
+   Farbe, damit er auch ohne Farbwahrnehmung erkennbar bleibt. */
+.segmented__option[aria-selected="true"],
+.segmented__input:checked + .segmented__option {
+  background-color: var(--c-surface);
+  color: var(--c-ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.segmented__option[aria-selected="true"] .segmented__label,
+.segmented__input:checked + .segmented__option .segmented__label {
+  font-weight: 600;
+}
+
+/* Im Formular tragen echte Radiofelder die Auswahl. Sie sind unsichtbar,
+   behalten aber Tastaturbedienung und Formularsemantik - der Fokusring
+   wandert auf die sichtbare Beschriftung. */
+.segmented__input:focus-visible + .segmented__option {
+  outline: 3px solid var(--c-sea);
+  outline-offset: 2px;
+}
+
+.form__fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.form__fieldset .field__label {
+  display: block;
+  margin-bottom: 0.375rem;
+  padding: 0;
+}
+
+.form__fieldset .segmented {
+  margin-bottom: 0;
+  max-width: none;
+}
+
+.segmented__meta {
+  color: var(--c-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.segmented__option[aria-selected="true"] .segmented__meta,
+.segmented__input:checked + .segmented__option .segmented__meta {
+  color: var(--c-sea);
+}
+
+@media (max-width: 560px) {
+  .segmented__option {
+    min-height: 48px;
+    font-size: 0.8125rem;
+  }
+
+  .segmented__meta {
+    display: none;
+  }
+}
+
+/* Ohne JavaScript bleiben alle Bereiche sichtbar und untereinander
+   lesbar - der Schalter blendet dann nichts aus. */
+.js [data-panel][hidden] {
+  display: none;
+}
+
+.panel-heading {
+  margin-bottom: var(--space-md);
+  color: var(--c-ink);
+  font-size: var(--fs-h4);
+}
+
+.js .panel-heading {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
    6. Header & Navigation
    -------------------------------------------------------------------------- */
 
@@ -1943,6 +2080,32 @@ hr {
   font-variant-numeric: tabular-nums;
 }
 
+/* Drei getrennte Galerien auf der Startseite - je Angebot eine. */
+.gallery-group + .gallery-group {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+
+.gallery-group__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-md);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.gallery-group__title {
+  font-size: var(--fs-h3);
+}
+
+.gallery-group__meta {
+  margin: 0;
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
 /* --------------------------------------------------------------------------
    11. Lage & Karte
    -------------------------------------------------------------------------- */
@@ -2292,6 +2455,242 @@ textarea.field__control {
 
 .contact-list__value:hover {
   color: var(--c-sea);
+}
+
+/* --------------------------------------------------------------------------
+   12b. Belegungskalender
+
+   Ersetzt im Anfrageformular die beiden Datumsfelder. Die Felder bleiben
+   im Markup und tragen weiterhin den Wert - der Kalender schreibt nur
+   hinein. Faellt JavaScript aus, sind sie wieder sichtbar.
+   -------------------------------------------------------------------------- */
+
+.kalender {
+  padding: var(--space-md);
+  background-color: var(--c-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.kalender__leiste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.kalender__stand {
+  flex: 1;
+  margin: 0;
+  color: var(--c-ink);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  text-align: center;
+}
+
+.kalender__blaettern {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.kalender__blaettern:hover {
+  background-color: var(--c-sand-soft);
+  border-color: var(--c-line-strong);
+}
+
+.kalender__blaettern svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.kalender__monate {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 700px) {
+  .kalender__monate {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.kalender__monat {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kalender__titel {
+  padding-bottom: var(--space-xs);
+  color: var(--c-ink);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  caption-side: top;
+}
+
+.kalender__monat th {
+  padding-bottom: 0.25rem;
+  color: var(--c-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kalender__monat td {
+  padding: 1px;
+  text-align: center;
+}
+
+.kalender__tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 38px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--c-body);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* Gewaehlte Tage vom allgemeinen Hover ausnehmen: sonst gewinnt die
+   Hover-Regel gegen .is-start/.is-ende (hoehere Spezifitaet) und die
+   weisse Schrift steht auf hellem Sand. */
+.kalender__tag:hover:not(:disabled):not(.is-gewaehlt) {
+  background-color: var(--c-sand-soft);
+}
+
+.kalender__tag.is-gewaehlt:hover {
+  background-color: var(--c-sea-tint);
+}
+
+.kalender__tag.is-start:hover,
+.kalender__tag.is-ende:hover {
+  background-color: var(--c-sea-dark);
+}
+
+.kalender__tag:disabled {
+  cursor: not-allowed;
+}
+
+/* Vergangene Tage treten zurueck, ohne Muster - sie sind schlicht vorbei. */
+.kalender__tag:disabled:not(.is-belegt) {
+  color: var(--c-line-strong);
+}
+
+/* Belegt: erkennbar auch ohne Farbwahrnehmung, durch die Schraffur. */
+.kalender__tag.is-belegt {
+  color: var(--c-muted);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--c-sand-soft) 0 3px,
+    var(--c-sand) 3px 6px
+  );
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+/* Angefragt: noch nicht verbindlich, deshalb nur umrandet. */
+.kalender__tag.is-angefragt {
+  box-shadow: inset 0 0 0 1px var(--c-line-strong);
+}
+
+.kalender__tag.is-gewaehlt {
+  background-color: var(--c-sea-tint);
+  color: var(--c-ink);
+}
+
+.kalender__tag.is-start,
+.kalender__tag.is-ende {
+  background-color: var(--c-sea);
+  color: #fff;
+  font-weight: 600;
+}
+
+.kalender__legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--c-line);
+  color: var(--c-muted);
+  font-size: 0.8125rem;
+}
+
+.kalender__legende li {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.kalender__muster {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.kalender__muster--frei {
+  background-color: var(--c-sand-soft);
+  box-shadow: inset 0 0 0 1px var(--c-line);
+}
+
+.kalender__muster--belegt {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--c-sand-soft) 0 3px,
+    var(--c-sand) 3px 6px
+  );
+}
+
+.kalender__muster--angefragt {
+  box-shadow: inset 0 0 0 1px var(--c-line-strong);
+}
+
+/* Meldung, wenn die Belegung nicht geladen werden konnte. */
+.kalender-hinweis {
+  margin-top: var(--space-sm);
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
+/* Sobald der Kalender laeuft, treten die Datumsfelder zurueck. Sie
+   bleiben im Markup und tragen weiterhin den Wert. */
+.js .form__row--datum.hat-kalender {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* --------------------------------------------------------------------------

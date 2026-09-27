@@ -13,3 +13,6 @@ Thumbs.db
 # Abhaengigkeiten (werden fuer den Build nicht benoetigt)
 node_modules/
 package-lock.json
+api/config.php
+daten/reservierungen.json
+daten/cache/

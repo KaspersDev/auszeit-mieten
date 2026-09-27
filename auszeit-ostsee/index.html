@@ -126,6 +126,9 @@
     <symbol id="icon-map" viewBox="0 0 24 24"><path d="m9 4-6 2.4V21l6-2.4 6 2.4 6-2.4V4l-6 2.4Z"/><path d="M9 4v14.6M15 6.4V21"/></symbol>
     <symbol id="icon-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.4 6.6h.01"/></symbol>
     <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M14.5 8.5H17V5h-2.5A4 4 0 0 0 10.5 9v2H8v3.5h2.5V21H14v-6.5h2.5L17 11h-3V9.3a.8.8 0 0 1 .5-.8Z"/></symbol>
+    <symbol id="icon-droplet" viewBox="0 0 24 24"><path d="M12 2.7s6 6.4 6 10.4a6 6 0 0 1-12 0c0-4 6-10.4 6-10.4Z"/><path d="M9.2 13.8a2.8 2.8 0 0 0 2.8 2.8"/></symbol>
+    <symbol id="icon-trailer" viewBox="0 0 24 24"><path d="M2 15h13V8H4a2 2 0 0 0-2 2Z"/><path d="M15 12h4.2l2.3 3H15"/><circle cx="7" cy="17.5" r="2"/><circle cx="18" cy="17.5" r="2"/><path d="M9 17.5h7"/></symbol>
+    <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11l-1 8.5 9-12h-6.5Z"/></symbol>
     <symbol id="icon-anchor" viewBox="0 0 32 32"><path d="M4 24c4.8 3.2 9 3.2 12 0 3 3.2 7.2 3.2 12 0"/><path d="M4 17c4.8 3.2 9 3.2 12 0 3 3.2 7.2 3.2 12 0"/><circle cx="16" cy="7" r="3.5"/></symbol>
   </defs>
 </svg>
@@ -185,6 +188,7 @@
           </ul>
         </li>
 
+        <li><a class="nav__link" href="whirlpool.html">Whirlpool</a></li>
         <li><a class="nav__link" href="#kontakt">Kontakt</a></li>
       </ul>
 
@@ -470,34 +474,22 @@
         <span class="eyebrow">Eindr&uuml;cke</span>
         <h2 id="galerie-titel" class="title-lg">Ein Blick ins Haus und nach drau&szlig;en</h2>
         <p class="lead" style="margin-top: 1rem;">
-          Ein Blick in die R&auml;ume und auf die Gegend rund um Boltenhagen.
+          Getrennt nach den drei Angeboten &mdash; die beiden Wohnungen und der
+          Whirlpool-Anh&auml;nger.
         </p>
       </div>
 
-      <div class="gallery">
-        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Ostsee am fr&uuml;hen Abend, wenige Minuten vom Haus entfernt">
-          <img src="images/gallery/galerie-01.jpg" width="1400" height="1050" loading="lazy" decoding="async"
-               alt="Weiter Blick auf die Ostsee am fruehen Abend">
-          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
-        </button>
-        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Wohnbereich Auszeit D&uuml;ne">
+      <!-- TODO Bilder Auszeit D&uuml;ne: eigene Fotos einsetzen. Die Dateinamen koennen
+           beibehalten werden, dann ist am HTML nichts zu aendern. -->
+      <div class="gallery-group reveal">
+        <div class="gallery-group__head">
+          <h3 class="gallery-group__title">Auszeit D&uuml;ne</h3>
+          <p class="gallery-group__meta">Wohnung 1 &middot; 62 m&sup2; &middot; bis 4 G&auml;ste</p>
+        </div>
+        <div class="gallery" data-gallery="eindruecke-duene">
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Wohnbereich der Auszeit D&uuml;ne">
           <img src="images/gallery/galerie-02.jpg" width="1400" height="1050" loading="lazy" decoding="async"
                alt="Wohnbereich mit warmem Tageslicht">
-          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
-        </button>
-        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="D&uuml;nenlandschaft hinter dem Strandaufgang">
-          <img src="images/gallery/galerie-03.jpg" width="1400" height="1050" loading="lazy" decoding="async"
-               alt="Duenenlandschaft mit Strandhafer">
-          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
-        </button>
-        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Schlafbereich Auszeit Hafen">
-          <img src="images/gallery/galerie-04.jpg" width="1400" height="1050" loading="lazy" decoding="async"
-               alt="Ruhiger Schlafbereich in gedeckten Farben">
-          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
-        </button>
-        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Abendstimmung &uuml;ber der Ostsee">
-          <img src="images/gallery/galerie-05.jpg" width="1400" height="1050" loading="lazy" decoding="async"
-               alt="Abendstimmung ueber der Ostsee">
           <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
         </button>
         <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="K&uuml;che mit Blick in den Innenhof">
@@ -505,16 +497,79 @@
                alt="Kueche mit Blick in den Innenhof">
           <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
         </button>
-        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Strandweg entlang der Steilk&uuml;ste">
-          <img src="images/gallery/galerie-07.jpg" width="1400" height="1050" loading="lazy" decoding="async"
-               alt="Weg entlang der Steilkueste">
-          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
-        </button>
         <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Bad mit ebenerdiger Dusche">
           <img src="images/gallery/galerie-08.jpg" width="1400" height="1050" loading="lazy" decoding="async"
                alt="Helles Bad mit ebenerdiger Dusche">
           <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
         </button>
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="D&uuml;nen hinter dem Strandaufgang">
+          <img src="images/gallery/galerie-03.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Duenenlandschaft mit Strandhafer">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        </div>
+      </div>
+
+      <!-- TODO Bilder Auszeit Hafen: eigene Fotos einsetzen. Die Dateinamen koennen
+           beibehalten werden, dann ist am HTML nichts zu aendern. -->
+      <div class="gallery-group reveal">
+        <div class="gallery-group__head">
+          <h3 class="gallery-group__title">Auszeit Hafen</h3>
+          <p class="gallery-group__meta">Wohnung 2 &middot; 48 m&sup2; &middot; bis 3 G&auml;ste</p>
+        </div>
+        <div class="gallery" data-gallery="eindruecke-hafen">
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Schlafbereich der Auszeit Hafen">
+          <img src="images/gallery/galerie-04.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Ruhiger Schlafbereich in gedeckten Farben">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Blick auf die Ostsee, wenige Minuten entfernt">
+          <img src="images/gallery/galerie-01.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Weiter Blick auf die Ostsee am fruehen Abend">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Weg entlang der Steilk&uuml;ste">
+          <img src="images/gallery/galerie-07.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Weg entlang der Steilkueste">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Abendstimmung &uuml;ber der Ostsee">
+          <img src="images/gallery/galerie-05.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Abendstimmung ueber der Ostsee">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        </div>
+      </div>
+
+      <!-- TODO Bilder Whirlpool-Anh&auml;nger: eigene Fotos einsetzen. Die Dateinamen koennen
+           beibehalten werden, dann ist am HTML nichts zu aendern. -->
+      <div class="gallery-group reveal">
+        <div class="gallery-group__head">
+          <h3 class="gallery-group__title">Whirlpool-Anh&auml;nger</h3>
+          <p class="gallery-group__meta">Tageweise zu mieten &middot; bis 6 Personen</p>
+        </div>
+        <div class="gallery" data-gallery="eindruecke-whirlpool">
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Der Anh&auml;nger am Abend">
+          <img src="images/whirlpool/whirlpool-01.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Whirlpool-Anhaenger bei Abendlicht">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Warmes Wasser, auch bei k&uuml;hlem Wetter">
+          <img src="images/whirlpool/whirlpool-02.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Warmes Wasser im Whirlpool">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Aufbau im Freien">
+          <img src="images/whirlpool/whirlpool-03.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Whirlpool-Anhaenger im Freien aufgebaut">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        <button class="gallery__item reveal" type="button" data-lightbox-trigger data-caption="Bedienung und Technik">
+          <img src="images/whirlpool/whirlpool-04.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+               alt="Bedienfeld und Technik des Whirlpools">
+          <span class="visually-hidden">Bild vergr&ouml;&szlig;ern</span>
+        </button>
+        </div>
       </div>
 
     </div>
@@ -525,64 +580,193 @@
        ================================================================ -->
   <section class="section section--tint" id="lage" aria-labelledby="lage-titel">
     <div class="container">
-      <div class="location__grid">
 
-        <div class="reveal">
-          <span class="eyebrow">Lage</span>
-          <h2 id="lage-titel" class="title-lg">Dreihundert Meter bis zum Wasser</h2>
-          <p class="lead" style="margin-block: 1rem 1.5rem;">
-            Das Haus liegt in einer ruhigen Seitenstra&szlig;e, wenige Gehminuten
-            vom Strand und vom Ortskern entfernt.
-          </p>
-          <p>
-            Boltenhagen hat einen breiten Sandstrand, eine Seebr&uuml;cke und eine
-            Promenade, die auch au&szlig;erhalb der Saison ge&ouml;ffnet ist. Wer
-            l&auml;nger laufen m&ouml;chte, erreicht in einer knappen halben Stunde
-            die Steilk&uuml;ste Richtung Redewisch.
-          </p>
-          <p>
-            Einkaufsm&ouml;glichkeiten, B&auml;cker und mehrere Restaurants liegen
-            im Ort. Ein Auto ist praktisch, aber nicht n&ouml;tig &mdash; f&uuml;r
-            Ausfl&uuml;ge nach Wismar oder Travem&uuml;nde lohnt es sich.
-          </p>
-
-          <ul class="distances">
-            <li><span class="distances__label">Strandaufgang</span><span class="distances__value">300 m</span></li>
-            <li><span class="distances__label">B&auml;ckerei und Supermarkt</span><span class="distances__value">400 m</span></li>
-            <li><span class="distances__label">Promenade und Ortskern</span><span class="distances__value">550 m</span></li>
-            <li><span class="distances__label">Seebr&uuml;cke</span><span class="distances__value">900 m</span></li>
-            <li><span class="distances__label">Steilk&uuml;ste Redewisch</span><span class="distances__value">1,8 km</span></li>
-            <li><span class="distances__label">Wismar Altstadt</span><span class="distances__value">35 km</span></li>
-            <li><span class="distances__label">L&uuml;beck</span><span class="distances__value">55 km</span></li>
-          </ul>
-        </div>
-
-        <div class="reveal reveal--delay-1">
-          <!-- Zwei-Klick-Loesung: Google Maps wird erst nach dem Klick geladen.
-               Vorher verlassen keine Daten den Browser der Besucher. -->
-          <div class="map" data-map data-map-src="https://www.google.com/maps?q=Ostseebad+Boltenhagen&amp;z=14&amp;output=embed">
-            <button class="map__preview" type="button" data-map-load>
-              <img src="images/karte-platzhalter.jpg" width="1600" height="900" loading="lazy" decoding="async"
-                   alt="Schematische Karte von Ostseebad Boltenhagen mit markierter Lage der Ferienwohnungen">
-              <span class="map__overlay">
-                <strong>Karte von Google Maps laden</strong>
-                <span class="map__overlay-text">
-                  Beim Laden werden Daten an Google &uuml;bertragen. Weitere Hinweise
-                  finden Sie in der Datenschutzerkl&auml;rung.
-                </span>
-                <span class="map__cta">
-                  <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true" focusable="false"><use href="#icon-map"></use></svg>
-                  Karte laden
-                </span>
-              </span>
-            </button>
-          </div>
-          <p class="map__hint">
-            Die genaue Adresse erhalten Sie nach der Buchung &uuml;ber Airbnb.
-          </p>
-        </div>
-
+      <div class="section__head section__head--center">
+        <span class="eyebrow">Lage</span>
+        <h2 id="lage-titel" class="title-lg">Wo Sie uns finden</h2>
+        <p class="lead" style="margin-top: 1rem;">
+          W&auml;hlen Sie ein Angebot &mdash; darunter erscheint die passende
+          Karte mit den wichtigsten Entfernungen.
+        </p>
       </div>
+
+      <div class="segmented segmented--center" role="tablist" aria-label="Angebot f&uuml;r die Kartenansicht w&auml;hlen" data-segmented="lage">
+        <button class="segmented__option" type="button" role="tab"
+                id="lage-tab-duene" data-segment="duene"
+                aria-selected="true" aria-controls="lage-panel-duene" tabindex="0">
+          <span class="segmented__label">Auszeit D&uuml;ne</span>
+          <span class="segmented__meta">Wohnung 1</span>
+        </button>
+        <button class="segmented__option" type="button" role="tab"
+                id="lage-tab-hafen" data-segment="hafen"
+                aria-selected="false" aria-controls="lage-panel-hafen" tabindex="-1">
+          <span class="segmented__label">Auszeit Hafen</span>
+          <span class="segmented__meta">Wohnung 2</span>
+        </button>
+        <button class="segmented__option" type="button" role="tab"
+                id="lage-tab-whirlpool" data-segment="whirlpool"
+                aria-selected="false" aria-controls="lage-panel-whirlpool" tabindex="-1">
+          <span class="segmented__label">Whirlpool</span>
+          <span class="segmented__meta">Anh&auml;nger</span>
+        </button>
+      </div>
+
+      <div id="lage-panel-duene" role="tabpanel" aria-labelledby="lage-tab-duene"
+           data-panel="duene" tabindex="0">
+        <h3 class="panel-heading">Auszeit D&uuml;ne</h3>
+        <div class="location__grid">
+
+          <div>
+            <!-- TODO: Text zur Lage der Wohnung 1 -->
+            <p>
+              Die Wohnung liegt in einer ruhigen Seitenstra&szlig;e, wenige
+              Gehminuten vom Strand und vom Ortskern entfernt.
+            </p>
+            <p>
+              Boltenhagen hat einen breiten Sandstrand, eine Seebr&uuml;cke und
+              eine Promenade, die auch au&szlig;erhalb der Saison ge&ouml;ffnet
+              ist. Einkaufsm&ouml;glichkeiten, B&auml;cker und mehrere
+              Restaurants liegen im Ort.
+            </p>
+            <ul class="distances">
+              <li><span class="distances__label">Strandaufgang</span><span class="distances__value">300 m</span></li>
+              <li><span class="distances__label">B&auml;ckerei und Supermarkt</span><span class="distances__value">400 m</span></li>
+              <li><span class="distances__label">Promenade und Ortskern</span><span class="distances__value">550 m</span></li>
+              <li><span class="distances__label">Seebr&uuml;cke</span><span class="distances__value">900 m</span></li>
+              <li><span class="distances__label">Steilk&uuml;ste Redewisch</span><span class="distances__value">1,8 km</span></li>
+              <li><span class="distances__label">Wismar Altstadt</span><span class="distances__value">35 km</span></li>
+            </ul>
+          </div>
+
+          <div>
+            <!-- Zwei-Klick-Loesung: Google Maps laedt erst nach dem Klick.
+                 Die Adresse steht in js/angebote.js, nicht hier. -->
+            <div class="map" data-map data-map-angebot="duene">
+              <button class="map__preview" type="button" data-map-load>
+                <img src="images/karte-platzhalter.jpg" width="1600" height="900" loading="lazy" decoding="async"
+                     alt="Schematische Karte mit der Lage der Ferienwohnung Auszeit Duene">
+                <span class="map__overlay">
+                  <strong>Karte von Google Maps laden</strong>
+                  <span class="map__overlay-text">
+                    Beim Laden werden Daten an Google &uuml;bertragen. Weitere Hinweise
+                    finden Sie in der Datenschutzerkl&auml;rung.
+                  </span>
+                  <span class="map__cta">
+                    <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true" focusable="false"><use href="#icon-map"></use></svg>
+                    Karte laden
+                  </span>
+                </span>
+              </button>
+            </div>
+            <p class="map__hint" data-map-adresse="duene"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="lage-panel-hafen" role="tabpanel" aria-labelledby="lage-tab-hafen"
+           data-panel="hafen" tabindex="0">
+        <h3 class="panel-heading">Auszeit Hafen</h3>
+        <div class="location__grid">
+
+          <div>
+            <!-- TODO: Text zur Lage der Wohnung 2 -->
+            <p>
+              Die Wohnung im Dachgeschoss liegt im selben Haus, mit Blick
+              &uuml;ber die D&auml;cher Richtung Hafen.
+            </p>
+            <p>
+              Zum Hafen und zur Promenade sind es wenige Minuten zu Fu&szlig;.
+              Wer l&auml;nger laufen m&ouml;chte, erreicht in einer knappen
+              halben Stunde die Steilk&uuml;ste Richtung Redewisch.
+            </p>
+            <ul class="distances">
+              <li><span class="distances__label">Strandaufgang</span><span class="distances__value">300 m</span></li>
+              <li><span class="distances__label">Hafen</span><span class="distances__value">700 m</span></li>
+              <li><span class="distances__label">Promenade und Ortskern</span><span class="distances__value">550 m</span></li>
+              <li><span class="distances__label">Seebr&uuml;cke</span><span class="distances__value">900 m</span></li>
+              <li><span class="distances__label">Steilk&uuml;ste Redewisch</span><span class="distances__value">1,8 km</span></li>
+              <li><span class="distances__label">L&uuml;beck</span><span class="distances__value">55 km</span></li>
+            </ul>
+          </div>
+
+          <div>
+            <!-- Zwei-Klick-Loesung: Google Maps laedt erst nach dem Klick.
+                 Die Adresse steht in js/angebote.js, nicht hier. -->
+            <div class="map" data-map data-map-angebot="hafen">
+              <button class="map__preview" type="button" data-map-load>
+                <img src="images/karte-platzhalter.jpg" width="1600" height="900" loading="lazy" decoding="async"
+                     alt="Schematische Karte mit der Lage der Ferienwohnung Auszeit Hafen">
+                <span class="map__overlay">
+                  <strong>Karte von Google Maps laden</strong>
+                  <span class="map__overlay-text">
+                    Beim Laden werden Daten an Google &uuml;bertragen. Weitere Hinweise
+                    finden Sie in der Datenschutzerkl&auml;rung.
+                  </span>
+                  <span class="map__cta">
+                    <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true" focusable="false"><use href="#icon-map"></use></svg>
+                    Karte laden
+                  </span>
+                </span>
+              </button>
+            </div>
+            <p class="map__hint" data-map-adresse="hafen"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="lage-panel-whirlpool" role="tabpanel" aria-labelledby="lage-tab-whirlpool"
+           data-panel="whirlpool" tabindex="0">
+        <h3 class="panel-heading">Whirlpool-Anh&auml;nger</h3>
+        <div class="location__grid">
+
+          <div>
+            <!-- TODO: Liefergebiet und Abholort beschreiben -->
+            <p>
+              Den Whirlpool-Anh&auml;nger liefern wir im Umkreis von 30&nbsp;km
+              rund um Boltenhagen &mdash; auf Wunsch auch weiter, dann kommt
+              eine Kilometerpauschale hinzu.
+            </p>
+            <p>
+              Abholung durch Sie selbst ist ebenfalls m&ouml;glich. Dazu
+              brauchen Sie eine Anh&auml;ngerkupplung und einen F&uuml;hrerschein
+              der passenden Klasse.
+            </p>
+            <ul class="distances">
+              <li><span class="distances__label">Lieferung ohne Aufpreis</span><span class="distances__value">bis 30 km</span></li>
+              <li><span class="distances__label">Aufbauzeit vor Ort</span><span class="distances__value">ca. 30 Min.</span></li>
+              <li><span class="distances__label">Vorlauf zum Aufheizen</span><span class="distances__value">ca. 8 Std.</span></li>
+              <li><span class="distances__label">Abholung durch Sie</span><span class="distances__value">nach Absprache</span></li>
+            </ul>
+          </div>
+
+          <div>
+            <!-- Zwei-Klick-Loesung: Google Maps laedt erst nach dem Klick.
+                 Die Adresse steht in js/angebote.js, nicht hier. -->
+            <div class="map" data-map data-map-angebot="whirlpool">
+              <button class="map__preview" type="button" data-map-load>
+                <img src="images/karte-platzhalter.jpg" width="1600" height="900" loading="lazy" decoding="async"
+                     alt="Schematische Karte des Liefergebiets rund um Ostseebad Boltenhagen">
+                <span class="map__overlay">
+                  <strong>Karte von Google Maps laden</strong>
+                  <span class="map__overlay-text">
+                    Beim Laden werden Daten an Google &uuml;bertragen. Weitere Hinweise
+                    finden Sie in der Datenschutzerkl&auml;rung.
+                  </span>
+                  <span class="map__cta">
+                    <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true" focusable="false"><use href="#icon-map"></use></svg>
+                    Karte laden
+                  </span>
+                </span>
+              </button>
+            </div>
+            <p class="map__hint" data-map-adresse="whirlpool"></p>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -593,19 +777,78 @@
     <div class="container">
 
       <div class="section__head">
-        <span class="eyebrow">Kontakt</span>
-        <h2 id="kontakt-titel" class="title-lg">Fragen vor der Buchung?</h2>
+        <span class="eyebrow">Anfrage</span>
+        <h2 id="kontakt-titel" class="title-lg">Wunschtermin anfragen</h2>
         <p class="lead" style="margin-top: 1rem;">
-          Schreiben Sie uns &mdash; wir antworten in der Regel am selben Tag.
+          Sagen Sie uns, was und wann Sie mieten m&ouml;chten &mdash; wir
+          antworten in der Regel am selben Tag.
         </p>
       </div>
 
       <div class="contact__grid">
 
         <div class="reveal">
-          <!-- Das Formular arbeitet ohne Backend. Wie ein Formulardienst
-               angebunden wird, steht in der README. -->
+          <!-- Das Formular arbeitet ohne Backend: Die Anfrage wird im
+               E-Mail-Programm der Besucher vorbereitet. Wie ein echter
+               Versanddienst angebunden wird, steht in der README. -->
           <form class="form" data-contact-form data-mail-to="kontakt@auszeit-mieten.de" novalidate>
+
+            <fieldset class="form__fieldset">
+              <legend class="field__label">Worum geht es?</legend>
+              <div class="segmented" data-segmented="kontakt">
+        <input class="segmented__input visually-hidden" type="radio" name="angebot"
+               id="angebot-duene" value="duene" checked data-angebot-name="Auszeit D&uuml;ne">
+        <label class="segmented__option" for="angebot-duene">
+          <span class="segmented__label">Auszeit D&uuml;ne</span>
+          <span class="segmented__meta">Wohnung 1</span>
+        </label>
+        <input class="segmented__input visually-hidden" type="radio" name="angebot"
+               id="angebot-hafen" value="hafen" data-angebot-name="Auszeit Hafen">
+        <label class="segmented__option" for="angebot-hafen">
+          <span class="segmented__label">Auszeit Hafen</span>
+          <span class="segmented__meta">Wohnung 2</span>
+        </label>
+        <input class="segmented__input visually-hidden" type="radio" name="angebot"
+               id="angebot-whirlpool" value="whirlpool" data-angebot-name="Whirlpool">
+        <label class="segmented__option" for="angebot-whirlpool">
+          <span class="segmented__label">Whirlpool</span>
+          <span class="segmented__meta">Anh&auml;nger</span>
+        </label>
+              </div>
+            </fieldset>
+
+            <!-- Der Belegungskalender wird hier eingesetzt, sobald die
+                 Belegung geladen ist. Schlaegt das fehl oder ist JavaScript
+                 aus, bleiben die beiden Datumsfelder darunter sichtbar. -->
+            <div class="field">
+              <span class="field__label" id="kalender-titel">
+                Zeitraum w&auml;hlen <span class="field__req" aria-hidden="true">*</span>
+              </span>
+              <div data-kalender aria-labelledby="kalender-titel"></div>
+              <p class="kalender-hinweis" data-kalender-hinweis role="status" aria-live="polite"></p>
+            </div>
+
+            <div class="form__row form__row--split form__row--datum" data-datumsfelder>
+              <div class="field">
+                <label class="field__label" for="kontakt-anreise">
+                  Anreise <span class="field__req" aria-hidden="true">*</span>
+                </label>
+                <input class="field__control" type="date" id="kontakt-anreise" name="anreise" required
+                       data-error-empty="Bitte w&auml;hlen Sie ein Anreisedatum."
+                       aria-describedby="fehler-anreise">
+                <span class="field__error" id="fehler-anreise" role="alert"></span>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="kontakt-abreise">
+                  Abreise <span class="field__req" aria-hidden="true">*</span>
+                </label>
+                <input class="field__control" type="date" id="kontakt-abreise" name="abreise" required
+                       data-error-empty="Bitte w&auml;hlen Sie ein Abreisedatum."
+                       aria-describedby="fehler-abreise">
+                <span class="field__error" id="fehler-abreise" role="alert"></span>
+              </div>
+            </div>
 
             <div class="form__row form__row--split">
               <div class="field">
@@ -635,11 +878,26 @@
               <label class="field__label" for="kontakt-nachricht">
                 Nachricht <span class="field__req" aria-hidden="true">*</span>
               </label>
-              <textarea class="field__control" id="kontakt-nachricht" name="nachricht" rows="6" required
-                        placeholder="Zeitraum, Anzahl der G&auml;ste und Ihre Frage"
+              <textarea class="field__control" id="kontakt-nachricht" name="nachricht" rows="5" required
+                        placeholder="Anzahl der G&auml;ste, Fragen oder W&uuml;nsche"
                         data-error-empty="Bitte schreiben Sie uns kurz Ihr Anliegen."
                         aria-describedby="fehler-nachricht"></textarea>
               <span class="field__error" id="fehler-nachricht" role="alert"></span>
+            </div>
+
+            <div class="field field--checkbox">
+              <input type="checkbox" id="kontakt-reservieren" name="reservieren"
+                     aria-describedby="hinweis-reservieren">
+              <span>
+                <label class="field__label" for="kontakt-reservieren">
+                  F&uuml;r den Zeitraum reservieren
+                </label>
+                <span class="small text-muted" id="hinweis-reservieren" style="display:block;">
+                  Wir halten den Zeitraum unverbindlich fest, bis wir Ihnen
+                  geantwortet haben. Verbindlich wird die Reservierung erst
+                  mit unserer Best&auml;tigung.
+                </span>
+              </span>
             </div>
 
             <div class="field field--checkbox">
@@ -667,7 +925,7 @@
 
             <div>
               <button class="btn btn--primary" type="submit">
-                Nachricht abschicken
+                Anfrage abschicken
                 <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-arrow-right"></use></svg>
               </button>
             </div>
@@ -680,10 +938,20 @@
           <div class="notice">
             <svg aria-hidden="true" focusable="false"><use href="#icon-info"></use></svg>
             <p>
-              <strong class="notice__title">Buchungen laufen &uuml;ber Airbnb</strong>
-              Verf&uuml;gbarkeit, Preise und die Buchung selbst verwalten wir
-              ausschlie&szlig;lich dort. &Uuml;ber dieses Formular k&ouml;nnen Sie
-              keine Wohnung reservieren.
+              <strong class="notice__title">So l&auml;uft eine Anfrage ab</strong>
+              Sie schicken uns Wunschtermin und Angebot. Wir pr&uuml;fen die
+              Verf&uuml;gbarkeit und best&auml;tigen per E-Mail. Erst dann ist
+              der Zeitraum verbindlich belegt.
+            </p>
+          </div>
+
+          <div class="notice" style="margin-top: var(--space-lg);">
+            <svg aria-hidden="true" focusable="false"><use href="#icon-info"></use></svg>
+            <p>
+              <strong class="notice__title">Wohnungen auch &uuml;ber Airbnb</strong>
+              Wer lieber direkt bucht, findet die beiden Wohnungen dort mit
+              tagesaktuellem Kalender. Der Whirlpool-Anh&auml;nger wird
+              ausschlie&szlig;lich &uuml;ber dieses Formular vermietet.
             </p>
           </div>
 
@@ -715,14 +983,6 @@
               </span>
             </li>
           </ul>
-
-          <div class="btn-row" style="margin-top: 2rem;">
-            <a class="btn btn--secondary" href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">
-              Beide Wohnungen bei Airbnb
-              <svg class="btn__icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg>
-              <span class="visually-hidden">(oeffnet in neuem Tab)</span>
-            </a>
-          </div>
         </div>
 
       </div>
@@ -774,10 +1034,11 @@
       </nav>
 
       <nav class="footer__nav" aria-label="Ferienwohnungen">
-        <h2 class="footer__title">Ferienwohnungen</h2>
+        <h2 class="footer__title">Angebote</h2>
         <ul class="footer__list">
           <li><a href="wohnung-duene.html">Auszeit D&uuml;ne</a></li>
           <li><a href="wohnung-hafen.html">Auszeit Hafen</a></li>
+          <li><a href="whirlpool.html">Whirlpool-Anh&auml;nger</a></li>
           <li><a href="https://www.airbnb.de/users/show/00000000" target="_blank" rel="noopener noreferrer">Airbnb-Profil</a></li>
         </ul>
       </nav>
@@ -828,6 +1089,9 @@
   <p class="lightbox__counter" data-lightbox-counter aria-live="polite"></p>
 </div>
 
+<!-- Zentrale Konfiguration der Angebote (Karten, Adressen, Kalender). -->
+<script src="js/angebote.js" defer></script>
+<script src="js/kalender.js" defer></script>
 <script src="js/main.js" defer></script>
 
 </body>

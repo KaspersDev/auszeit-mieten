@@ -15,14 +15,17 @@ Servern, solange niemand die Karte lädt.
 1. [Website ansehen](#website-ansehen)
 2. [Dateistruktur](#dateistruktur)
 3. [Seitenstruktur und Navigation](#seitenstruktur-und-navigation)
-4. [Vor dem Livegang anpassen](#vor-dem-livegang-anpassen)
-5. [Bilder austauschen](#bilder-austauschen)
-6. [Weitere Wohnung hinzufügen](#weitere-wohnung-hinzufügen)
-7. [Kontaktformular](#kontaktformular)
-8. [Karte](#karte)
-9. [Farben und Schrift](#farben-und-schrift)
-10. [Veröffentlichen](#veröffentlichen)
-11. [Barrierefreiheit und SEO](#barrierefreiheit-und-seo)
+4. [Platzhalter ersetzen](#platzhalter-ersetzen)
+5. [Vor dem Livegang anpassen](#vor-dem-livegang-anpassen)
+6. [Bilder austauschen](#bilder-austauschen)
+7. [Weitere Wohnung hinzufügen](#weitere-wohnung-hinzufügen)
+8. [Anfrageformular](#anfrageformular)
+9. [Belegungskalender einrichten (IONOS)](#belegungskalender-einrichten-ionos)
+10. [Wie eine Buchung abläuft](#wie-eine-buchung-abläuft)
+11. [Karte](#karte)
+12. [Farben und Schrift](#farben-und-schrift)
+13. [Veröffentlichen](#veröffentlichen)
+14. [Barrierefreiheit und SEO](#barrierefreiheit-und-seo)
 
 ---
 
@@ -53,6 +56,7 @@ python3 -m http.server 8000
 ├── index.html                  Startseite mit allen Abschnitten
 ├── wohnung-duene.html          Detailseite Ferienwohnung „Auszeit Düne"
 ├── wohnung-hafen.html          Detailseite Ferienwohnung „Auszeit Hafen"
+├── whirlpool.html              Detailseite Whirlpool-Anhänger
 ├── impressum.html              Impressum nach § 5 DDG
 ├── datenschutz.html            Datenschutzerklärung nach DSGVO
 ├── favicon.svg                 Symbol für den Browser-Tab
@@ -60,11 +64,23 @@ python3 -m http.server 8000
 ├── sitemap.xml                 Seitenverzeichnis für Suchmaschinen
 ├── css/
 │   └── styles.css              gesamtes Layout, in 17 Abschnitte gegliedert
+├── api/                        PHP-Teil für den Belegungskalender
+│   ├── config.beispiel.php     Vorlage — zu config.php kopieren
+│   ├── verfuegbarkeit.php      belegte Tage als JSON
+│   ├── reservierung.php        Anfragen annehmen
+│   ├── bestaetigen.php         Bestätigen oder Ablehnen
+│   ├── kalender.php            eigener iCal-Feed je Angebot
+│   └── lib/                    iCal, Ablage, Helfer
+├── daten/                      Reservierungen (von außen gesperrt)
 ├── js/
-│   └── main.js                 neun kleine Module, jeweils klar abgegrenzt
+│   ├── angebote.js             zentrale Konfiguration der drei Angebote
+│   ├── kalender.js             Belegungskalender im Formular
+│   └── main.js                 elf kleine Module, jeweils klar abgegrenzt
 ├── fonts/
-│   ├── inter-latin-variable.woff2
-│   └── inter-latin-ext-variable.woff2
+│   ├── fraunces-latin-variable.woff2
+│   ├── fraunces-latin-ext-variable.woff2
+│   ├── figtree-latin-variable.woff2
+│   └── figtree-latin-ext-variable.woff2
 ├── images/
 │   ├── hero.jpg                großes Bild im Kopfbereich
 │   ├── wohnung1.jpg            Auszeit Düne
@@ -72,6 +88,7 @@ python3 -m http.server 8000
 │   ├── gastgeber.jpg           Foto der Gastgeber
 │   ├── karte-platzhalter.jpg   Vorschaubild der Karte
 │   ├── og-image.jpg            Vorschau beim Teilen in sozialen Netzwerken
+│   ├── whirlpool/              Bilder des Whirlpool-Anhängers
 │   └── gallery/
 │       └── galerie-01.jpg … galerie-08.jpg
 ├── tools/
@@ -97,18 +114,19 @@ index.html               Startseite
   #start                   Kopfbereich
   #ueber-uns               Über uns
   #wohnungen               Übersicht beider Wohnungen
-  #galerie                 Galerie
-  #lage                    Lage und Umgebung
-  #kontakt                 Kontakt
+  #galerie                 Eindrücke — drei getrennte Galerien
+  #lage                    Lage — mit Auswahlschalter je Angebot
+  #kontakt                 Anfrage — mit Auswahlschalter und Zeitraum
 
 wohnung-duene.html       Detailseite „Auszeit Düne"
 wohnung-hafen.html       Detailseite „Auszeit Hafen"
+whirlpool.html           Detailseite Whirlpool-Anhänger
 impressum.html           Impressum
 datenschutz.html         Datenschutzerklärung
 ```
 
 Die Hauptnavigation steht in dieser Reihenfolge: **Startseite · Über uns ·
-Wohnungen · Kontakt**. „Wohnungen" ist ein aufklappbarer Punkt und besteht
+Wohnungen · Whirlpool · Kontakt**. „Wohnungen" ist ein aufklappbarer Punkt und besteht
 aus zwei Bedienelementen:
 
 - der **Link** führt zur Übersicht `index.html#wohnungen`,
@@ -121,10 +139,73 @@ entscheiden — so geht beides. Am Rechner öffnet die Liste zusätzlich beim
 Überfahren mit der Maus, mit der Tastatur über Enter auf dem Knopf; `Esc`
 schließt sie wieder.
 
+### Der Auswahlschalter
+
+„Lage" und „Anfrage" nutzen denselben optischen Baustein, um zwischen den
+drei Angeboten zu wechseln — mit einem Unterschied im Aufbau:
+
+- In **„Lage"** ist es eine Tabliste (`role="tablist"`). Ein Klick blendet
+  den passenden Bereich ein; die Pfeiltasten, `Pos1` und `Ende` wechseln
+  durch.
+- Im **Anfrageformular** sind es echte Radiofelder. Dadurch funktionieren
+  Tastaturbedienung und Formularübergabe ohne eigenen Code, und die Auswahl
+  landet automatisch in der E-Mail.
+
+Beide sehen gleich aus (`.segmented` in `css/styles.css`). Auf schmalen
+Bildschirmen bleiben die drei Optionen nebeneinander, nur die Zusatzzeile
+(„Wohnung 1" usw.) wird ausgeblendet.
+
 Der Kopf- und Fußbereich ist auf **allen** Seiten identisch. Wird dort etwas
 geändert, muss die Änderung in `index.html`, `wohnung-duene.html`,
 `wohnung-hafen.html`, `impressum.html` und `datenschutz.html` nachgezogen
 werden — die Seite ist bewusst rein statisch und hat keine Vorlagen-Technik.
+
+---
+
+## Platzhalter ersetzen
+
+Alles, was noch echte Inhalte braucht, ist im Quelltext mit `TODO`
+markiert. So finden Sie alle Stellen auf einmal — in VS Code mit
+`Strg+Umschalt+F` nach `TODO` suchen.
+
+### Whirlpool-Anhänger
+
+Das Angebot ist vollständig angelegt, aber mit Platzhaltern gefüllt.
+
+| Was | Wo |
+|---|---|
+| Überschrift, Einleitung, Beschreibung | `whirlpool.html`, Abschnitte mit `TODO` |
+| Eckdaten (Personen, Wasserinhalt, Aufheizzeit, Anschluss) | `whirlpool.html`, Block „Eckdaten" |
+| **Preisliste** (Staffel, Kaution, Kilometerpauschale) | `whirlpool.html`, Block `booking-card` |
+| Leistungen „Im Preis enthalten" | `whirlpool.html` |
+| Bilder | `images/whirlpool/` — Dateinamen beibehalten, dann ist am HTML nichts zu ändern |
+
+### Bilder der drei Galerien
+
+Die „Eindrücke" auf der Startseite sind in drei Blöcke geteilt. Jeder Block
+ist im HTML mit `TODO Bilder …` markiert:
+
+| Galerie | Bilder liegen in |
+|---|---|
+| Auszeit Düne | `images/gallery/` |
+| Auszeit Hafen | `images/gallery/` |
+| Whirlpool-Anhänger | `images/whirlpool/` |
+
+### Karten, Adressen und Kalender
+
+Diese Angaben stehen **nur an einer Stelle**: in `js/angebote.js`. Dort
+tragen Sie je Angebot ein:
+
+- `kartenUrl` — die Google-Maps-Adresse für die Kartenansicht
+- `adresse` — die Anschrift
+- `adresseHinweis` — die Zeile, die unter der Karte erscheint
+- `icalImport` — später die Kalenderadressen von Airbnb und Booking.com
+
+Die Startseite liest diese Werte aus; im HTML ist nichts anzupassen.
+
+**Wie Sie an eine Karten-Adresse kommen:** In Google Maps den Ort suchen,
+auf „Teilen" → „Karte einbetten" klicken und aus dem `<iframe>` nur den
+Wert von `src` kopieren.
 
 ---
 
@@ -254,24 +335,183 @@ der Icon-Sammlung: `wifi`, `kitchen`, `balcony`, `sea`, `washer`, `parking`,
 
 ---
 
-## Kontaktformular
+## Anfrageformular
 
-Das Formular arbeitet **vollständig im Browser**. Es prüft die Eingaben und
-öffnet anschließend das E-Mail-Programm der Besucher mit einer fertig
-vorbereiteten Nachricht. Es gibt keinen Server, der etwas entgegennimmt —
-deshalb wird auch niemandem eine Zustellung versprochen, die nicht
-stattfindet.
+Das Formular auf der Startseite ist eine **Terminanfrage**, keine Buchung.
+Es arbeitet vollständig im Browser: Es prüft die Eingaben und öffnet
+anschließend das E-Mail-Programm der Besucher mit einer fertig
+vorbereiteten Nachricht. Es gibt keinen Server, der etwas entgegennimmt.
 
-Geprüft wird: Name vorhanden, E-Mail-Adresse plausibel, Nachricht mindestens
-zehn Zeichen, Einwilligung gesetzt. Ein verstecktes Feld (Honeypot) fängt
-einfache Spam-Bots ab.
+Die vorbereitete E-Mail enthält:
+
+- das gewählte **Angebot** (Düne, Hafen oder Whirlpool)
+- **Anreise und Abreise** in deutscher Schreibweise
+- ob der Zeitraum **reserviert** werden soll
+- Name, E-Mail-Adresse und die Nachricht
+
+Der Betreff trägt Angebot und Zeitraum, damit Anfragen schon im
+Posteingang unterscheidbar sind — zum Beispiel
+`Reservierungswunsch: Whirlpool, 20.11.2026 bis 23.11.2026`.
+
+Geprüft wird: Anreise und Abreise gesetzt, Abreise nach Anreise, Name
+vorhanden, E-Mail plausibel, Nachricht mindestens zehn Zeichen,
+Einwilligung gesetzt. Ein verstecktes Feld (Honeypot) fängt einfache
+Spam-Bots ab.
+
+**Noch nicht enthalten:** der Belegungskalender mit gesperrten Terminen.
+Solange er fehlt, stehen an seiner Stelle zwei gewöhnliche Datumsfelder.
+Sie sind im HTML als Platzhalter gekennzeichnet.
 
 **Echten Versand anbinden:** Dienste wie Formspree, Netlify Forms oder
 Web3Forms brauchen nur ein `action`-Attribut am `<form>`. In `js/main.js`
 entfällt dann der Block, der die `mailto`-Adresse zusammensetzt (im Modul
-`initContactForm`), und statt `event.preventDefault()` wird das Formular nach
-erfolgreicher Prüfung abgeschickt. **Wichtig:** In diesem Fall muss die
+`initContactForm`). **Wichtig:** In diesem Fall muss die
 Datenschutzerklärung um den gewählten Dienst ergänzt werden.
+
+---
+
+## Belegungskalender einrichten (IONOS)
+
+Der Kalender im Anfrageformular zeigt belegte Tage aus Airbnb und
+Booking.com und sperrt sie. Dafür laufen fünf PHP-Dateien im Ordner
+`api/`. Sie brauchen keinen zusätzlichen Dienst — IONOS liefert PHP mit.
+
+### Schritt 1: Konfiguration anlegen
+
+`api/config.beispiel.php` kopieren und in `api/config.php` umbenennen.
+Dann ausfüllen:
+
+| Wert | Was hinein muss |
+|---|---|
+| `empfaenger` | Ihre E-Mail-Adresse — dorthin gehen die Anfragen |
+| `absender` | Absenderadresse **Ihrer Domain**, sonst landet die Mail im Spam |
+| `geheimnis` | eine lange Zufallszeichenkette, siehe unten |
+| `basis_url` | `https://www.ihre-domain.de`, ohne Schrägstrich am Ende |
+| `ical_import` | die Kalenderadressen aus Airbnb und Booking.com |
+
+Das Geheimnis erzeugen Sie so — in der IONOS-Konsole oder lokal:
+
+```bash
+php -r "echo bin2hex(random_bytes(32));"
+```
+
+Es schützt die Bestätigungslinks. Ändern Sie es, werden alle offenen
+Links ungültig.
+
+**`config.php` gehört nicht ins Git-Repository.** Die `.gitignore`
+schließt sie bereits aus.
+
+### Schritt 2: Kalenderadressen holen
+
+**Airbnb:** Inserat → Kalender → Verfügbarkeit → Kalender synchronisieren
+→ Kalender exportieren. Sie bekommen eine Adresse auf `.ics`.
+
+**Booking.com:** Extranet → Preise & Verfügbarkeit → Kalender
+synchronisieren → Exportieren.
+
+Beide Adressen kommen in `config.php` unter das jeweilige Angebot. Der
+Whirlpool-Anhänger bleibt leer — er wird nicht über Portale vermietet.
+
+Diese Adressen sind keine Passwörter, aber auch nicht öffentlich: Wer sie
+kennt, sieht Ihre Belegung. Deshalb gehören sie in `config.php` und nicht
+in eine Datei, die im Repository landet.
+
+### Schritt 3: Hochladen und Rechte prüfen
+
+Hochladen müssen Sie `api/` und `daten/`. Der Ordner `daten/` muss für
+PHP **beschreibbar** sein (Rechte 755 oder 775) — dort liegen die
+Reservierungen. Er ist per `.htaccess` gegen Zugriff von außen gesperrt.
+
+Prüfen Sie nach dem Hochladen:
+
+```
+https://ihre-domain.de/daten/reservierungen.json   → muss 403 liefern
+https://ihre-domain.de/api/config.php              → muss 403 oder leer sein
+https://ihre-domain.de/api/verfuegbarkeit.php?angebot=duene → JSON
+```
+
+### Schritt 4: Eigenen Kalender bei den Portalen eintragen
+
+Ihre Seite stellt je Angebot einen eigenen Kalender bereit:
+
+```
+https://ihre-domain.de/api/kalender.php?angebot=duene
+https://ihre-domain.de/api/kalender.php?angebot=hafen
+https://ihre-domain.de/api/kalender.php?angebot=whirlpool
+```
+
+Diese Adressen tragen Sie bei Airbnb und Booking.com **als externen
+Kalender** ein (dieselbe Stelle wie beim Export, dort gibt es
+„Kalender importieren").
+
+---
+
+## Wie eine Buchung abläuft
+
+1. Jemand wählt im Formular Angebot und Zeitraum. Belegte Tage sind
+   gesperrt und nicht anklickbar.
+2. Die Anfrage wird als **„offen"** gespeichert. **Sie sperrt nichts** —
+   weder auf Ihrer Seite noch bei den Portalen. Im Kalender erscheint sie
+   nur als „angefragt".
+3. Sie bekommen eine E-Mail mit zwei Links: **Bestätigen** oder
+   **Ablehnen**.
+4. Erst beim Bestätigen wird daraus eine Belegung. Sie erscheint dann in
+   Ihrem eigenen Kalender-Feed, und der anfragende Gast bekommt eine
+   Zusage per E-Mail.
+5. Beim Ablehnen wird nichts gesperrt und **keine** Nachricht an den Gast
+   geschickt — antworten Sie ihm selbst.
+
+### Das Risiko der Doppelbuchung
+
+**Airbnb und Booking.com rufen importierte Kalender nur alle paar Stunden
+ab.** Airbnb nennt etwa zwei Stunden, in der Praxis dauert es oft länger.
+Booking.com verhält sich ähnlich.
+
+Das heißt: Zwischen Ihrer Bestätigung und dem Moment, in dem Airbnb den
+Termin übernimmt, liegen Stunden. In diesem Fenster kann dort jemand
+denselben Zeitraum buchen.
+
+Deshalb:
+
+- **Sehen Sie vor dem Bestätigen kurz in Airbnb und Booking nach.** Der
+  Hinweis steht auch in jeder Benachrichtigungsmail.
+- Anfragen von der Website sind bewusst unverbindlich, bis Sie zusagen.
+
+Das lässt sich mit iCal grundsätzlich nicht ausschließen — von keiner
+Lösung. Wer das Risiko ganz vermeiden will, braucht einen Channel Manager
+wie Smoobu oder Beds24, der die Portale direkt anbindet (ab etwa 20 € im
+Monat).
+
+---
+
+## Was passiert, wenn etwas ausfällt
+
+Die Seite ist so gebaut, dass jeder Ausfall eine Stufe tiefer aufgefangen
+wird:
+
+| Fall | Verhalten |
+|---|---|
+| Airbnb-Kalender nicht erreichbar | letzter erfolgreich geladener Stand wird verwendet, Hinweis im Formular |
+| `api/` fehlt oder PHP ist aus | Kalender verschwindet, die beiden Datumsfelder erscheinen wieder, Anfrage geht über das E-Mail-Programm |
+| JavaScript aus | alles sichtbar und lesbar, Formular per E-Mail-Programm |
+| `daten/` nicht beschreibbar | Anfrage meldet einen Fehler und bittet um eine direkte E-Mail |
+
+### Dateien im Ordner `api/`
+
+| Datei | Aufgabe |
+|---|---|
+| `config.php` | Ihre Angaben und Geheimnisse (nicht im Repository) |
+| `verfuegbarkeit.php` | liefert belegte Tage als JSON, mit Zwischenspeicher |
+| `reservierung.php` | nimmt Anfragen an, verschickt die Mails |
+| `bestaetigen.php` | Bestätigen oder Ablehnen über den Link aus der Mail |
+| `kalender.php` | Ihr eigener iCal-Feed je Angebot |
+| `lib/ical.php` | iCal lesen und schreiben |
+| `lib/speicher.php` | Reservierungen ablegen, mit Dateisperre |
+| `lib/hilfen.php` | gemeinsame Helfer, Mailversand |
+
+Die Reservierungen liegen als `daten/reservierungen.json` — eine
+gewöhnliche Textdatei. Bei wenigen Anfragen im Monat braucht es dafür
+keine Datenbank, und im Zweifel können Sie sie im Editor öffnen.
 
 ---
 

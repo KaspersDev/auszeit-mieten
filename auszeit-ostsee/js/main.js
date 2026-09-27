@@ -365,8 +365,8 @@
 
   function initLightbox() {
     var lightbox = $("[data-lightbox]");
-    var triggers = $$("[data-lightbox-trigger]");
-    if (!lightbox || !triggers.length) {
+    var alle = $$("[data-lightbox-trigger]");
+    if (!lightbox || !alle.length) {
       return;
     }
 
@@ -376,22 +376,41 @@
     var btnClose = $("[data-lightbox-close]", lightbox);
     var btnPrev = $("[data-lightbox-prev]", lightbox);
     var btnNext = $("[data-lightbox-next]", lightbox);
+
+    // Blaettern bleibt innerhalb einer Galerie. Ohne diese Gruppierung
+    // wuerde man vom letzten Bild der ersten Wohnung in die Bilder der
+    // zweiten rutschen - auf der Startseite liegen drei Galerien.
+    var gruppe = alle;
     var index = 0;
     var lastFocused = null;
 
+    function gruppeVon(trigger) {
+      var behaelter = trigger.closest("[data-gallery]");
+      return behaelter ? $$("[data-lightbox-trigger]", behaelter) : alle;
+    }
+
     function show(next) {
-      index = (next + triggers.length) % triggers.length;
-      var trigger = triggers[index];
+      index = (next + gruppe.length) % gruppe.length;
+      var trigger = gruppe[index];
       var thumb = $("img", trigger);
       image.setAttribute("src", trigger.getAttribute("data-full") || thumb.getAttribute("src"));
       image.setAttribute("alt", thumb ? thumb.getAttribute("alt") : "");
       caption.textContent = trigger.getAttribute("data-caption") || (thumb ? thumb.getAttribute("alt") : "");
-      counter.textContent = String(index + 1) + " von " + String(triggers.length);
+      counter.textContent = String(index + 1) + " von " + String(gruppe.length);
     }
 
-    function open(next) {
+    // Nur eine Galerie: die Pfeile stiften keinen Nutzen.
+    function pfeileAnpassen() {
+      var zeigen = gruppe.length > 1;
+      btnPrev.hidden = !zeigen;
+      btnNext.hidden = !zeigen;
+    }
+
+    function open(trigger) {
       lastFocused = document.activeElement;
-      show(next);
+      gruppe = gruppeVon(trigger);
+      pfeileAnpassen();
+      show(gruppe.indexOf(trigger));
       lightbox.classList.add("is-open");
       lightbox.removeAttribute("aria-hidden");
       document.body.classList.add("is-locked");
@@ -407,9 +426,9 @@
       }
     }
 
-    triggers.forEach(function (trigger, position) {
+    alle.forEach(function (trigger) {
       trigger.addEventListener("click", function () {
-        open(position);
+        open(trigger);
       });
     });
 
@@ -445,8 +464,201 @@
   }
 
   // ------------------------------------------------------------------
+  // Auswahlschalter fuer die drei Angebote
+  //
+  // Im Abschnitt Lage ist es eine Tabliste: ein Klick blendet den
+  // zugehoerigen Bereich ein, die Pfeiltasten wechseln durch. Im
+  // Anfrageformular uebernehmen echte Radiofelder dieselbe Optik - dort
+  // ist nichts zu steuern, das erledigt der Browser.
+  // ------------------------------------------------------------------
+
+  function initSegmented() {
+    $$("[data-segmented][role='tablist']").forEach(function (liste) {
+      var tabs = $$("[role='tab']", liste);
+      if (!tabs.length) {
+        return;
+      }
+
+      function panelVon(tab) {
+        var id = tab.getAttribute("aria-controls");
+        return id ? document.getElementById(id) : null;
+      }
+
+      function waehle(tab, fokus) {
+        tabs.forEach(function (anderer) {
+          var aktiv = anderer === tab;
+          anderer.setAttribute("aria-selected", String(aktiv));
+          anderer.setAttribute("tabindex", aktiv ? "0" : "-1");
+          var panel = panelVon(anderer);
+          if (panel) {
+            panel.hidden = !aktiv;
+          }
+        });
+        if (fokus) {
+          tab.focus();
+        }
+      }
+
+      // Anfangszustand erst hier setzen. Stuende hidden schon im HTML,
+      // waeren die uebrigen Bereiche ohne JavaScript dauerhaft verborgen -
+      // ohne Schalter, der sie wieder einblendet.
+      var aktiver = tabs.filter(function (t) {
+        return t.getAttribute("aria-selected") === "true";
+      })[0] || tabs[0];
+      waehle(aktiver, false);
+
+      tabs.forEach(function (tab, position) {
+        tab.addEventListener("click", function () {
+          waehle(tab, false);
+        });
+
+        tab.addEventListener("keydown", function (event) {
+          var ziel = null;
+          if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+            ziel = tabs[(position + 1) % tabs.length];
+          } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+            ziel = tabs[(position - 1 + tabs.length) % tabs.length];
+          } else if (event.key === "Home") {
+            ziel = tabs[0];
+          } else if (event.key === "End") {
+            ziel = tabs[tabs.length - 1];
+          }
+          if (ziel) {
+            event.preventDefault();
+            waehle(ziel, true);
+          }
+        });
+      });
+    });
+  }
+
+  // ------------------------------------------------------------------
+  // Belegungskalender
+  //
+  // Holt die belegten Tage des gewaehlten Angebots vom eigenen Server
+  // (api/verfuegbarkeit.php) und uebergibt sie dem Kalender. Beim Wechsel
+  // des Angebots wird neu geladen.
+  //
+  // Schlaegt der Abruf fehl, bleibt es bei den beiden Datumsfeldern - die
+  // Anfrage ist dann weiterhin moeglich, nur ohne gesperrte Tage.
+  // ------------------------------------------------------------------
+
+  function initBelegung() {
+    var behaelter = $("[data-kalender]");
+    var felder = $("[data-datumsfelder]");
+    var hinweis = $("[data-kalender-hinweis]");
+    var feldVon = $("#kontakt-anreise");
+    var feldBis = $("#kontakt-abreise");
+
+    if (!behaelter || !felder || !feldVon || !feldBis || !window.Kalender) {
+      return;
+    }
+
+    var kalender = window.Kalender.erstellen(behaelter, {
+      feldVon: feldVon,
+      feldBis: feldBis,
+      beiAenderung: function () {
+        // Eine frisch getroffene Auswahl loescht alte Fehlermeldungen.
+        [feldVon, feldBis].forEach(function (feld) {
+          var block = feld.closest(".field");
+          if (block) {
+            block.classList.remove("has-error");
+          }
+          feld.removeAttribute("aria-invalid");
+        });
+      }
+    });
+
+    felder.classList.add("hat-kalender");
+
+    var laufend = 0;
+
+    function laden(angebot) {
+      var meiner = ++laufend;
+      hinweis.textContent = "Belegung wird geladen \u2026";
+
+      fetch("api/verfuegbarkeit.php?angebot=" + encodeURIComponent(angebot), {
+        headers: { "Accept": "application/json" },
+        // Belegung nie aus dem Browser-Cache: Sie darf nicht veralten,
+        // sonst waehlt jemand einen Termin, der laengst vergeben ist.
+        cache: "no-store"
+      })
+        .then(function (antwort) {
+          if (!antwort.ok) {
+            throw new Error("HTTP " + antwort.status);
+          }
+          return antwort.json();
+        })
+        .then(function (daten) {
+          // Eine spaeter gestartete Abfrage hat Vorrang.
+          if (meiner !== laufend) {
+            return;
+          }
+          kalender.setzeBelegung(daten.belegt, daten.angefragt);
+          if (daten.quellen_fehler > 0) {
+            hinweis.textContent = "Hinweis: Ein Kalender konnte nicht abgerufen werden. " +
+              "Die Anzeige ist moeglicherweise nicht vollstaendig.";
+          } else {
+            hinweis.textContent = "";
+          }
+        })
+        .catch(function () {
+          if (meiner !== laufend) {
+            return;
+          }
+          // Ohne Belegung ist der Kalender irrefuehrend - zurueck zu den
+          // Datumsfeldern, damit niemand einen belegten Termin waehlt.
+          felder.classList.remove("hat-kalender");
+          behaelter.innerHTML = "";
+          hinweis.textContent = "Die Belegung liess sich gerade nicht laden. " +
+            "Bitte tragen Sie den Zeitraum unten ein - wir pruefen ihn von Hand.";
+        });
+    }
+
+    function gewaehltesAngebot() {
+      var feld = $("input[name='angebot']:checked");
+      return feld ? feld.value : null;
+    }
+
+    $$("input[name='angebot']").forEach(function (feld) {
+      feld.addEventListener("change", function () {
+        // Ein Zeitraum, der fuer ein Angebot frei ist, muss es fuer das
+        // naechste nicht sein.
+        kalender.leeren();
+        laden(feld.value);
+      });
+    });
+
+    // Nach einer gesendeten Anfrage zuruecksetzen und neu laden: der
+    // eigene Eintrag erscheint dann sofort als "angefragt".
+    document.addEventListener("anfrage-gesendet", function () {
+      kalender.leeren();
+      var aktuell = gewaehltesAngebot();
+      if (aktuell) {
+        laden(aktuell);
+      }
+    });
+
+    var start = gewaehltesAngebot();
+    if (start) {
+      laden(start);
+    }
+  }
+
+  // ------------------------------------------------------------------
   // Kontaktformular
   // ------------------------------------------------------------------
+
+  // Wandelt den Wert eines Datumsfelds (JJJJ-MM-TT) in deutsche
+  // Schreibweise. Leere Felder bleiben als Hinweis erkennbar.
+  function datumLesbar(feld) {
+    var wert = feld && feld.value ? feld.value : "";
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(wert)) {
+      return "offen";
+    }
+    var teile = wert.split("-");
+    return teile[2] + "." + teile[1] + "." + teile[0];
+  }
 
   function initContactForm() {
     var form = $("[data-contact-form]");
@@ -560,36 +772,134 @@
         return;
       }
 
+      // Die Abreise muss nach der Anreise liegen. Ein Feld fuer sich ist
+      // gueltig, erst im Verhaeltnis zeigt sich der Fehler.
+      var von = $("#kontakt-anreise", form);
+      var bis = $("#kontakt-abreise", form);
+      if (von && bis && von.value && bis.value && bis.value <= von.value) {
+        setError(bis, "Die Abreise muss nach der Anreise liegen.");
+        announce("Bitte pruefen Sie den gewaehlten Zeitraum.", "error");
+        bis.focus();
+        return;
+      }
+
       // Diese Seite ist statisch und versendet selbst nichts. Die Eingaben
       // werden an das E-Mail-Programm der Besucher uebergeben. Wie stattdessen
       // ein echter Formulardienst angebunden wird, steht in der README.
       var name = $("#kontakt-name", form);
       var mail = $("#kontakt-email", form);
       var text = $("#kontakt-nachricht", form);
-      var subject = "Anfrage ueber die Website";
-      var body = "Name: " + (name ? name.value.trim() : "") +
+      var anreise = $("#kontakt-anreise", form);
+      var abreise = $("#kontakt-abreise", form);
+      var reservieren = $("#kontakt-reservieren", form);
+      var gewaehlt = $("input[name='angebot']:checked", form);
+
+      var angebotName = gewaehlt
+        ? (gewaehlt.getAttribute("data-angebot-name") || gewaehlt.value)
+        : "nicht angegeben";
+      var zeitraum = datumLesbar(anreise) + " bis " + datumLesbar(abreise);
+      var reserviert = reservieren && reservieren.checked;
+
+      // Der Betreff traegt Angebot und Zeitraum, damit Anfragen schon im
+      // Posteingang unterscheidbar sind.
+      var subject = (reserviert ? "Reservierungswunsch" : "Anfrage") +
+        ": " + angebotName + ", " + zeitraum;
+
+      var body = "Angebot: " + angebotName +
+        "\nAnreise: " + datumLesbar(anreise) +
+        "\nAbreise: " + datumLesbar(abreise) +
+        "\nZeitraum reservieren: " + (reserviert ? "ja" : "nein") +
+        "\n\nName: " + (name ? name.value.trim() : "") +
         "\nE-Mail: " + (mail ? mail.value.trim() : "") +
-        "\n\n" + (text ? text.value.trim() : "");
+        "\n\nNachricht:\n" + (text ? text.value.trim() : "");
 
-      announce(
-        "Vielen Dank. Ihre Nachricht wurde in Ihrem E-Mail-Programm vorbereitet - " +
-        "bitte dort noch absenden. Falls sich kein Fenster oeffnet, schreiben Sie " +
-        "uns direkt an " + mailTarget + ".",
-        "success"
-      );
-
-      if (mailTarget) {
-        // Ueber einen Link statt ueber window.location: das E-Mail-Programm
-        // oeffnet sich, die Seite selbst bleibt unveraendert stehen.
-        var link = document.createElement("a");
-        link.href = "mailto:" + mailTarget +
-          "?subject=" + encodeURIComponent(subject) +
-          "&body=" + encodeURIComponent(body);
-        link.style.display = "none";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      // Weg 1: an den eigenen Server. Dann landet die Anfrage in der
+      // Ablage, und die Gastgeber bekommen einen Bestaetigungslink.
+      // Weg 2 (Rueckfall): das E-Mail-Programm der Besucher, wie bisher.
+      // So funktioniert das Formular auch auf reinem Webspace ohne PHP.
+      var knopf = $("button[type='submit']", form);
+      if (knopf) {
+        knopf.disabled = true;
       }
+      announce("Anfrage wird gesendet \u2026", "success");
+
+      function ueberMailProgramm(grund) {
+        announce(
+          (reserviert
+            ? "Ihr Reservierungswunsch wurde in Ihrem E-Mail-Programm vorbereitet - "
+            : "Ihre Anfrage wurde in Ihrem E-Mail-Programm vorbereitet - ") +
+          "bitte dort noch absenden. Verbindlich wird der Termin erst mit unserer " +
+          "Bestaetigung. Falls sich kein Fenster oeffnet, schreiben Sie uns direkt " +
+          "an " + mailTarget + "." + (grund ? " (" + grund + ")" : ""),
+          "success"
+        );
+        if (mailTarget) {
+          // Ueber einen Link statt ueber window.location: das E-Mail-Programm
+          // oeffnet sich, die Seite selbst bleibt unveraendert stehen.
+          var link = document.createElement("a");
+          link.href = "mailto:" + mailTarget +
+            "?subject=" + encodeURIComponent(subject) +
+            "&body=" + encodeURIComponent(body);
+          link.style.display = "none";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+        if (knopf) {
+          knopf.disabled = false;
+        }
+      }
+
+      if (!window.fetch) {
+        ueberMailProgramm("");
+        return;
+      }
+
+      fetch("api/reservierung.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          angebot: gewaehlt ? gewaehlt.value : "",
+          von: von && von.value ? von.value : "",
+          bis: bis && bis.value ? bis.value : "",
+          name: name ? name.value.trim() : "",
+          email: mail ? mail.value.trim() : "",
+          nachricht: text ? text.value.trim() : "",
+          reservieren: reserviert,
+          website: trap ? trap.value : ""
+        })
+      })
+        .then(function (antwort) {
+          return antwort.json().then(function (daten) {
+            return { ok: antwort.ok, status: antwort.status, daten: daten };
+          });
+        })
+        .then(function (ergebnis) {
+          if (ergebnis.ok && ergebnis.daten.ok) {
+            announce(ergebnis.daten.meldung || "Vielen Dank fuer Ihre Anfrage.", "success");
+            form.reset();
+            // Der Kalender haelt seine Auswahl in den Feldern - nach dem
+            // Zuruecksetzen muss er ebenfalls geleert werden.
+            document.dispatchEvent(new CustomEvent("anfrage-gesendet"));
+            if (knopf) {
+              knopf.disabled = false;
+            }
+            return;
+          }
+          if (ergebnis.status >= 400 && ergebnis.status < 500 && ergebnis.daten.fehler) {
+            // Der Server hat die Eingaben geprueft und etwas beanstandet.
+            announce(ergebnis.daten.fehler, "error");
+            if (knopf) {
+              knopf.disabled = false;
+            }
+            return;
+          }
+          ueberMailProgramm("");
+        })
+        .catch(function () {
+          // Kein PHP, keine Verbindung - dann eben ueber das Mailprogramm.
+          ueberMailProgramm("");
+        });
     });
   }
 
@@ -598,26 +908,51 @@
   // ------------------------------------------------------------------
 
   function initMapConsent() {
-    var wrapper = $("[data-map]");
-    if (!wrapper) {
-      return;
+    var angebote = window.ANGEBOTE || [];
+
+    function angebotVon(id) {
+      for (var i = 0; i < angebote.length; i++) {
+        if (angebote[i].id === id) {
+          return angebote[i];
+        }
+      }
+      return null;
     }
 
-    var button = $("[data-map-load]", wrapper);
-    var src = wrapper.getAttribute("data-map-src");
-    if (!button || !src) {
-      return;
-    }
+    $$("[data-map]").forEach(function (wrapper) {
+      var button = $("[data-map-load]", wrapper);
+      if (!button) {
+        return;
+      }
 
-    button.addEventListener("click", function () {
-      var frame = document.createElement("iframe");
-      frame.className = "map__frame";
-      frame.setAttribute("src", src);
-      frame.setAttribute("title", "Karte mit der Lage der Ferienwohnungen");
-      frame.setAttribute("loading", "lazy");
-      frame.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
-      frame.setAttribute("allowfullscreen", "");
-      wrapper.replaceChild(frame, button);
+      // Die Adresse steht entweder direkt am Element oder - bei den
+      // Angeboten - zentral in js/angebote.js.
+      var src = wrapper.getAttribute("data-map-src");
+      var id = wrapper.getAttribute("data-map-angebot");
+      var angebot = id ? angebotVon(id) : null;
+      if (!src && angebot) {
+        src = angebot.kartenUrl;
+      }
+      if (!src) {
+        return;
+      }
+
+      // Hinweiszeile unter der Karte aus derselben Quelle fuellen.
+      var hinweis = $("[data-map-adresse='" + id + "']", wrapper.parentNode);
+      if (hinweis && angebot) {
+        hinweis.textContent = angebot.adresseHinweis || "";
+      }
+
+      button.addEventListener("click", function () {
+        var frame = document.createElement("iframe");
+        frame.className = "map__frame";
+        frame.setAttribute("src", src);
+        frame.setAttribute("title", "Karte" + (angebot ? " - " + angebot.name : ""));
+        frame.setAttribute("loading", "lazy");
+        frame.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
+        frame.setAttribute("allowfullscreen", "");
+        wrapper.replaceChild(frame, button);
+      });
     });
   }
 
@@ -642,6 +977,8 @@
     initScrollSpy();
     initReveal();
     initLightbox();
+    initSegmented();
+    initBelegung();
     initContactForm();
     initMapConsent();
     initCurrentYear();

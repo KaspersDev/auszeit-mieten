@@ -1,0 +1,18 @@
+# Die Konfiguration enthaelt Geheimnisse. PHP-Dateien werden zwar
+# ausgefuehrt statt ausgeliefert, aber falls PHP einmal ausfaellt,
+# duerfen sie nicht im Klartext erscheinen.
+<FilesMatch "^(config|config\.beispiel)\.php$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Der Unterordner lib/ wird nur eingebunden, nie direkt aufgerufen.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^lib/ - [F,L]
+</IfModule>

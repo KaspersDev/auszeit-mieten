@@ -28,15 +28,18 @@ const FILES = [
   "index.html",
   "wohnung-duene.html",
   "wohnung-hafen.html",
+  "whirlpool.html",
   "impressum.html",
   "datenschutz.html",
   "images/logo.png",
   "robots.txt",
   "sitemap.xml"
 ];
-const DIRS = ["css", "js", "images", "fonts"];
+// api/ wird unveraendert kopiert - PHP wird nicht verkleinert.
+const DIRS = ["css", "js", "images", "fonts", "api"];
 
 /* Diese Dateien werden nicht angefasst, nur kopiert. */
+const UNVERAENDERT = new Set([".php", ".htaccess"]);
 const BINARY = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".ico", ".woff", ".woff2", ".ttf"]);
 
 // ---------------------------------------------------------------------------
@@ -182,14 +185,21 @@ function report(relative, before, after) {
   );
 }
 
+// Niemals ausliefern: die eigene Konfiguration mit den Geheimnissen und
+// die Ablage der Reservierungen. Beides gehoert nur auf den Server.
+const NIEMALS = [/(^|[\\/])config\.php$/, /(^|[\\/])daten([\\/]|$)/];
+
 function processFile(absolute) {
   const relative = path.relative(ROOT, absolute);
+  if (NIEMALS.some(function (muster) { return muster.test(relative); })) {
+    return;
+  }
   const target = path.join(DIST, relative);
   const extension = path.extname(absolute).toLowerCase();
 
   fs.mkdirSync(path.dirname(target), { recursive: true });
 
-  if (BINARY.has(extension)) {
+  if (BINARY.has(extension) || UNVERAENDERT.has(extension) || path.basename(absolute) === ".htaccess") {
     fs.copyFileSync(absolute, target);
     const size = fs.statSync(absolute).size;
     report(relative, size, size);
